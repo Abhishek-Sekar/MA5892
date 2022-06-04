@@ -1,0 +1,578 @@
+\documentclass[letterpaper]{exam}
+\printanswers
+\usepackage{hyperref}
+\usepackage[utf8x]{inputenc}
+\usepackage[table]{xcolor}
+\usepackage{listings}
+\usepackage{mdframed}
+\usepackage{lmodern}
+\usepackage[left=0.25in, right=0.25in, top=0.75in, bottom=0.75in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{subfigure}
+\usepackage{enumerate}
+\usepackage{tcolorbox}
+\pagestyle{headandfoot}
+
+\usepackage{cancel}
+\usepackage{placeins}
+\usepackage{multirow}
+\usepackage{algorithm2e}
+\pagecolor{black}
+\color{white}
+\hypersetup{%
+  colorlinks=true,% hyperlinks will be black
+  linkbordercolor=red,% hyperlink borders will be red
+  pdfborderstyle={/S/U/W 1}% border style will be underline of width 1pt
+}
+
+\newcommand{\soln}{\\ \textbf{Solution}: }
+\newcommand{\bkt}[1]{\left(#1\right)}
+\lhead{MA5892: Numerical Methods and Scientific Computing}
+
+\chead{Assignment: 1}
+
+\rhead{Rollnumber: EE18B067}
+
+\begin{document}
+\hrule
+\vspace{3mm}
+\noindent 
+\vspace{3mm}
+\noindent{{\sf Roll No:} EE18B067 \hfill  {\sf Name:Abhishek Sekar}}% put your ROLL NO AND NAME HERE
+
+\noindent
+{{\sf Date: \today }} %Date
+
+
+
+\vspace{3mm}
+\hrule
+\begin{questions}
+\question{\sc [Representation of Real Numbers on the computer]}\\
+Real numbers are represented on the computer as follows:\\
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+     \huge{\color{red}S}&\huge{\color{green}A}&\huge{\color{green}B}&\huge{\color{green}C}&\huge{\color{yellow}E}  \\[0.5ex]
+\hline
+\end{tabular}
+\end{center}
+where
+\begin{itemize}
+    \item {\color{red}S} is the sign bit with it being 0 for positive numbers and 1 for negative numbers.
+    \item {\color{green}A,B,C} are the first three significant digits in the decimal expansion with the decimal point occurring between {\color{green}A} and {\color{green}B}.
+    \item All digits after the third significant digit are chopped off.
+    \item {\color{yellow}E} is the exponent in base 10 with a bias of 5.
+    \item \textbf{Number Representations}
+    \begin{center}
+        \begin{tabular}{|c|c|c|c|c|c|}
+        \hline
+        \LARGE{Number}&\huge{\color{red}S}&\huge{\color{green}A}&\huge{\color{green}B}&\huge{\color{green}C}&\huge{\color{yellow}E}  \\[0.5ex]
+        \hline
+         + 0&0&0&Anything&Anything&Anything \\[0.5ex]
+        \hline
+        - 0&1&0&Anything&Anything&Anything \\[0.5ex]
+        \hline
+        + $\infty$&0&9&9&9&9 \\[0.5ex]
+        \hline
+        - $\infty$&1&9&9&9&9 \\[0.5ex]
+        \hline
+        NaN&Not 0 or 1&Anything&Anything&Anything&Anything \\[0.5ex]
+        \hline
+        \end{tabular}
+    \end{center}
+\end{itemize}
+
+\begin{parts}
+    \part How many non-zero Floating Point numbers (FPN) can be represented by our machine?
+	\begin{solution}
+	\\
+		We can try solving this by considering the number of choices we have for the values S,A,B,C and E which will result in a non-zero floating point number.\\
+		For a non-zero floating point number,
+		\begin{itemize}
+		    \item \textbf{S} can take one of a total of 2 permissible values, namely $\{0,1\}$. S taking any other value is used to represent NaN which is not a floating point number.
+		    \item \textbf{A} can take one of a total of 9 permissible values, namely$\{1,2,3,4,5,6,7,8,9\}$. A is not permitted to take the value 0, as that is a requirement to represent zero on the machine.
+		    \item \textbf{B},\textbf{C} and \textbf{E} can take one of a total of 10 permissible values, namely $\{0,1,2,3,4,5,6,7,8,9\}$ as there is no restriction on them when it comes to representing zero on the machine thereby permitting all possible choices. 
+		\end{itemize}
+		Employing the \textit{fundamental principle of counting},the total number of ways in which we can represent a non-zero floating point number is the product of the number of ways in which each individual value S,A,B,C,E can be represented for the given purpose.
+		\\
+		Therefore, the number of non-zero Floating Point Numbers that can be represented on the machine is 2x9x10x10x10 = 18x$10^{3}$ or 18000 numbers of which 17998 are normal floating point numbers and the other two are $+\infty$ and $-\infty$.
+	\end{solution}
+	\part How many FPN are in the following intervals?
+	\begin{subparts}
+	\subpart (9, 10)
+	\begin{solution}
+	\\
+	We can try employing the same approach as in the previous subdivision to find the total number of FPN.\\\\
+	\textbf{(9, 10):}
+	\begin{itemize}
+	    \item \textbf{Representation of the lower bound 9}:\\
+	    To find the machine representation of 9, let us express it in scientific notation with 3 significant digits (as that is the extent to which the machine can represent the number).\\
+	    9 = 9.00x$10^0$\\
+	    From this we can see that 9 is represented in the below form.
+	    \begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+     \huge{\color{red}0}&\huge{\color{green}9}&\huge{\color{green}0}&\huge{\color{green}0}&\huge{\color{yellow}5}  \\[0.5ex]
+\hline
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item S is 0 as 9 is positive.
+\item A is 9 as it is the first digit(digit before the decimal point) in scientific notation.
+\item B and C are 0 as they're the first two significant digits that trail the decimal point.
+\item E is 5 as the exponent in scientific notation is 0. Adding the bias 5 to the exponent value, we get the value of E to be 5.
+\end{itemize}
+\item \textbf{Representation of the upper bound 10}:\\
+	    Expressing 10 in scientific notation to three significant digits, we get,\\
+	    10 = 1.00x$10^1$\\
+	    From this we can see that 10 is represented in the below form.
+	    \begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+     \huge{\color{red}0}&\huge{\color{green}1}&\huge{\color{green}0}&\huge{\color{green}0}&\huge{\color{yellow}6}  \\[0.5ex]
+\hline
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item S is 0 as 10 is positive.
+\item A is 1 as it is the first digit(digit before the decimal point) in scientific notation.
+\item B and C are 0 as they're the first two significant digits that trail the decimal point.
+\item E is 6 as the exponent in scientific notation is 1. Adding the bias 5 to the exponent value, we get the value of E to be 6.
+\end{itemize}
+\item \textbf{Identifying restrictions on S,A,B,C,E through the above two representations}\\
+\begin{itemize}
+    \item As both 9 and 10 are positive, any number between them is also positive therefore, S remains 0. Therefore, the possible values of S includes only 0.
+    \item As the interval is an open one, meaning 9 and 10 are not included, the term A necessarily has to take the value 9 as anything else would not represent floating point numbers lying in the interval as the largest FPN below 10 starts with the digit 9 and the smallest FPN above 9 also starts with the digit 9.Therefore, the possible values of A includes only 9.
+    \item B and C can take any value with the sole exception of both of them being 0, ie,
+    $\{B,C\} = \{0,0\}$ as that would represent 9 which doesn't lie inside the interval.Therefore, the possible values of B,C include those from $\{0,1,2,3,4,5,6,7,8,9\}$ obeying the constraint $\{B,C\} \neq \{0,0\}$ .
+    \item E necessarily has to take the value 5 as the E term remains constant throughout the interval and only changes at the endpoint 10 which is not part of the interval.Therefore, the possible values of E includes only 5.
+\end{itemize}
+\item \textbf{Computing the answer}\\
+Therefore by the \textit{fundamental principle of counting}, the total number of floating point numbers lying between 9 and 10 are, 1x1x(10x10-1)x1 = 99 FPN. (10x10 - 1 represents the total number of values the pair $\{B,C\}$ can take without violating $\{B,C\} \neq \{0,0\}$ as B and C can each take a total of 10 possible values individually)
+	\end{itemize}
+	\end{solution}
+	\subpart (10, 11)
+	\begin{solution}
+	\\
+	\textbf{(10, 11):}
+	\begin{itemize}
+	    \item \textbf{Representation of the lower bound 10}:\\
+	    Expressing 10 in scientific notation to three significant digits, we get,\\
+	    10 = 1.00x$10^1$\\
+	    From this we can see that 10 is represented in the below form.
+	    \begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+     \huge{\color{red}0}&\huge{\color{green}1}&\huge{\color{green}0}&\huge{\color{green}0}&\huge{\color{yellow}6}  \\[0.5ex]
+\hline
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item S is 0 as 10 is positive.
+\item A is 1 as it is the first digit(digit before the decimal point) in scientific notation.
+\item B and C are 0 as they're the first two significant digits that trail the decimal point.
+\item E is 6 as the exponent in scientific notation is 1. Adding the bias 5 to the exponent value, we get the value of E to be 6.
+\end{itemize}
+\item \textbf{Representation of the upper bound 11}:\\
+	    Expressing 10 in scientific notation to three significant digits, we get,\\
+	    11 = 1.10x$10^1$\\
+	    From this we can see that 11 is represented in the below form.
+	    \begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+     \huge{\color{red}0}&\huge{\color{green}1}&\huge{\color{green}1}&\huge{\color{green}0}&\huge{\color{yellow}6}  \\[0.5ex]
+\hline
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item S is 0 as 11 is positive.
+\item A is 1 as it is the first digit(digit before the decimal point) in scientific notation.
+\item B is 1 and C is 0 as they're the first two significant digits that trail the decimal point.
+\item E is 6 as the exponent in scientific notation is 1. Adding the bias 5 to the exponent value, we get the value of E to be 6.
+\end{itemize}
+\item \textbf{Identifying restrictions on S,A,B,C,E through the above two representations}\\
+\begin{itemize}
+    \item As both 10 and 11 are positive, any number between them is also positive therefore, S remains 0. Therefore, the possible values of S includes only 0.
+    \item As the interval is an open one,the term A necessarily has to take the value 1 as anything else would not represent floating point numbers lying in the interval as the largest FPN below 11 starts with the digit 1 and the smallest FPN above 10 also starts with the digit 1.Therefore, the possible values of A includes only 1.
+    \item B necessarily has to take the value 0 due to the same reason above for A applied to the second significant digit. C however can take any value besides 0 as that would represent 10 which isn't part of the interval. Therefore, the possible values of B includes only 0 and that of C is $\{1,2,3,4,5,6,7,8,9\}$.
+    \item E necessarily has to take the value 6 as the E term remains constant throughout the interval.Therefore, the possible values of E includes only 5.
+\end{itemize}
+\item \textbf{Computing the answer}\\
+Therefore by the \textit{fundamental principle of counting}, the total number of floating point numbers lying between 10 and 11 are, 1x1x1x9x1 = 9 FPN.
+	\end{itemize}
+	\end{solution}
+	\subpart (0, 1)
+	\begin{solution}
+	\\
+	\textbf{(0, 1):}
+	\begin{itemize}
+	    \item \textbf{Representation of the lower bound 0}:\\
+	    From the table, we can see that +0 (as the interval is between 0 and 1) is represented in the below form.
+	    \begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+     \huge{\color{red}0}&\huge{\color{green}0}&\huge{\color{green}X}&\huge{\color{green}X}&\huge{\color{yellow}X}  \\[0.5ex]
+\hline
+\end{tabular}
+\end{center}
+Where X indicates that any digit can be put in that place.
+\item \textbf{Representation of the upper bound 1}:\\
+	    Expressing 1 in scientific notation to three significant digits, we get,\\
+	    1 = 1.00x$10^0$\\
+	    From this we can see that 1 is represented in the below form.
+	    \begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+     \huge{\color{red}0}&\huge{\color{green}1}&\huge{\color{green}0}&\huge{\color{green}0}&\huge{\color{yellow}5}  \\[0.5ex]
+\hline
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item S is 0 as 1 is positive.
+\item A is 1 as it is the first digit(digit before the decimal point) in scientific notation.
+\item B and C are 0 as they're the first two significant digits that trail the decimal point.
+\item E is 5 as the exponent in scientific notation is 0. Adding the bias 5 to the exponent value, we get the value of E to be 5.
+\end{itemize}
+\item \textbf{Identifying restrictions on S,A,B,C,E through the above two representations}\\
+\begin{itemize}
+    \item As we're looking at the interval between 0 and 1 which comprises only positive numbers, S remains 0. Therefore, the possible values of S includes only 0.
+    \item As the interval is an open one,the term A cannot take the value 0 as 0 is an endpoint  of the interval. A can take any other value since with an appropriate exponent term, the number will remain in the interval. Therefore, the possible values of A are $\{1,2,3,4,5,6,7,8,9\}$. 
+    \item B and C can take any value whatsoever as there is no inherent constraint on them here as in the previous parts. For any value of B and C, with an appropriate A and E value, the number will remain in the interval.Therefore, the possible values of B,C are $\{0,1,2,3,4,5,6,7,8,9\}$.
+    \item E has to take values less than 5. If E takes the value 5, it automatically represents a number lying outside the interval. This is because A is the digit appearing before the decimal point in the scientific notation, and for any permitted value of A, the FPN will be greater than or equal to 1 for an E value of 5 or higher. Additionally, the values of E less than 5 belong to numbers with negative exponents which lie in the given interval. Therefore, the possible values of E are $\{0,1,2,3,4\}$.
+\end{itemize}
+\item \textbf{Computing the answer}\\
+Therefore by the \textit{fundamental principle of counting}, the total number of floating point numbers lying between 0 and 1 are, 1x9x10x10x5 = 4500 FPN.
+	\end{itemize}
+	\end{solution}
+	\end{subparts}
+	\part Identify the smallest positive and largest positive FPN on the machine.
+	\begin{solution}
+	\\
+	\textbf{Smallest positive FPN}:\\
+	For the smallest positive FPN, we would like the following:
+	\begin{itemize}
+	    \item The number should be one with the largest negative exponent in order to be as small as possible.Therefore, we have E = 0, thereby the actual exponent being -5 (subtracting the bias).
+	    \item A,B,C have to take the values 1,0,0 respectively as for a given exponent E,
+	    1.00x$10^E$ is smaller than any other number with the same exponent.
+	    \item S has to take the value 0 as the number is positive.
+	\end{itemize}
+	With these, the representation of the smallest positive FPN on the machine is \begin{tabular}{|c|c|c|c|c|}
+\hline
+     \huge{\color{red}0}&\huge{\color{green}1}&\huge{\color{green}0}&\huge{\color{green}0}&\huge{\color{yellow}0}  \\[0.5ex]
+\hline
+\end{tabular} with its value being 1.00x$10^{-5}$.\\
+\textbf{Largest positive FPN}:
+\\
+If the question is referring to the largest positive FPN, then it is $+\infty$.\\
+However in the case it is referring to the largest positive \textit{normal} FPN, meaning finite floating point number we should tread as we did for the smallest positive FPN.\\
+	For the largest positive normal FPN, we would like the following:
+	\begin{itemize}
+	    \item The number should be one with the largest positive exponent in order to be as large as possible.Therefore, we have E = 9, thereby the actual exponent being +4 (subtracting the bias).
+	    \item A,B,C have to take the values 9,9,8 respectively as for a given exponent E,
+	    9.98x$10^E$ is larger than any other number with the same exponent(considering only 3 significant digits) with the sole exception being 9.99x$10^E$.However,the exception requires A,B,C,E = 9 which happens to be the representation of $\infty$ in our machine and hence this combination is not permitted to represent a normal FPN. 
+	    \item S has to take the value 0 as the number is positive.
+	\end{itemize}
+	With these, the representation of the largest positive FPN on the machine is \begin{tabular}{|c|c|c|c|c|}
+\hline
+     \huge{\color{red}0}&\huge{\color{green}9}&\huge{\color{green}9}&\huge{\color{green}8}&\huge{\color{yellow}9}  \\[0.5ex]
+\hline
+\end{tabular} with its value being 9.98x$10^{4}$.
+	\end{solution}
+	\part Identify the machine precision.
+	\begin{solution}
+	\\
+	Machine precision $\epsilon_{m}$ is defined as the difference between the number 1 and the smallest number exceeding 1 represented on the machine.
+	\\
+	Referring to a previous subdivision, we can see that 1 is represented as \begin{tabular}{|c|c|c|c|c|}
+\hline
+     \huge{\color{red}0}&\huge{\color{green}1}&\huge{\color{green}0}&\huge{\color{green}0}&\huge{\color{yellow}5}  \\[0.5ex]
+\hline
+\end{tabular} in the machine.\\\\
+We are now required to find the next number greater than 1 which is representable on the machine.For this, we should keep the values of S,A,B and E intact and increase C by the smallest possible step. This is because, changing S,A or E will make the number drastically larger or smaller than 1 which defeats our purpose. Since C represents the number appearing after B in the decimal point,it is more sensitive to change when compared to B.
+\\\\
+Therefore, the number just greater than 1 representable on the machine is \begin{tabular}{|c|c|c|c|c|}
+\hline
+     \huge{\color{red}0}&\huge{\color{green}1}&\huge{\color{green}0}&\huge{\color{green}1}&\huge{\color{yellow}5}  \\[0.5ex]
+\hline
+\end{tabular} with a value of 1.01x$10^0$.\\
+Therefore, employing the definition of machine precision, $\epsilon_{m}$ = 1.01 - 1 = $10^{-2}$
+	
+	\end{solution}
+	\part What is the smallest positive integer not representable exactly on this machine?
+	\begin{solution}
+	\\
+	Using the fact that any number with more than three significant digits gets stripped down to its first three significant digits in our machine,logically, the smallest positive integer not representable exactly would be the smallest one with more than 3 significant digits.\\
+	This number would be 1001 as in scientific notation, it is expressed as $1.001$x$10^3$, but in our machine this gets chopped off to 1.00x$10^3$ and hence is not representable exactly.\\
+	Any positive integer below 1001 can be expressed accurately using just three significant digits and is therefore representable exactly on the machine.
+	\end{solution}
+	\part Consider solving the following recurrence on our machine:\\
+    $a_{n+1} = 5a_{n} − 4a_{n−1}$\\
+    with $a_{1} = a_{2} = 2.932$. Compute $a_{n}$ for n $\in \{3, 4, 5, 6, 7\}$ on our machine.
+    \begin{itemize}
+        \item $a_1, a_2$ would be chopped to three significant digits to begin with.
+        \item At each step in the recurrence, $5a_n$
+    and $4a_{n−1}$ would be chopped down to the first three significant digits before the subtraction is performed.
+    \end{itemize}
+	\begin{solution}
+	\\
+	\begin{itemize}
+	    \item \textbf{Initialization:}\\
+	    $a_{1},a_{2}$ = 2.932. As this has 4 significant digits, in our machine, $a_{1},a_{2}$ will be chopped down to 3 significant digits and represented as \begin{tabular}{|c|c|c|c|c|}
+\hline
+     \huge{\color{red}0}&\huge{\color{green}2}&\huge{\color{green}9}&\huge{\color{green}3}&\huge{\color{yellow}5}  \\[0.5ex]
+\hline
+\end{tabular} with a value of 2.93x$10^0$.\\
+\item \textbf{n = 2:}
+\begin{itemize}
+\item \textbf{Multiplication}\\
+As n = 2, $a_{n}$ is $a_{2}$ represented as 2.93x$10^0$ on the machine. Therefore the representation of 5x$a_{n}$ will be 5x2.93x$10^0$ = 1.465x$10^1$ chopped to three significant digits which is 1.46x$10^1$.\\
+Similarly doing the same for the $a_{n-1}$ term $a_{1}$, we have, 4x$a_{1}$ 4x2.93x$10^0$ = 1.172x$10^1$ represented as 1.17x$10^1$ on the machine.
+\item \textbf{Subtraction}\\
+Subtracting the machine representation of $4a_{1}$ from that of $5a_{2}$ we get 2.90x$10^0$ which can be accurately represented in the machine as it has three significant digits.
+\item \textbf{Update}\\
+Therefore, $a_{3}$ will be represented as \begin{tabular}{|c|c|c|c|c|}
+\hline
+     \huge{\color{red}0}&\huge{\color{green}2}&\huge{\color{green}9}&\huge{\color{green}0}&\huge{\color{yellow}5}  \\[0.5ex]
+\hline
+\end{tabular} with a value of 2.90x$10^0$.
+\end{itemize}
+\item \textbf{n = 3:}
+\begin{itemize}
+\item \textbf{Multiplication}\\
+As n = 3, $a_{n}$ is $a_{3}$.Therefore the representation of 5x$a_{n}$ will be 5x2.90x$10^0$ = 1.45x$10^1$ which already has 3 significant digits and therefore no chopping takes place.\\
+Similarly doing the same for the $a_{n-1}$ term $a_{2}$, we have, 4x$a_{2}$ 4x2.93x$10^0$ = 1.172x$10^1$ represented as 1.17x$10^1$ on the machine.
+\item \textbf{Subtraction}\\
+Subtracting the machine representation of $4a_{2}$ from that of $5a_{3}$ we get 2.80x$10^0$ which can be accurately represented in the machine as it has three significant digits.
+\item \textbf{Update}\\
+Therefore, $a_{4}$ will be represented as \begin{tabular}{|c|c|c|c|c|}
+\hline
+     \huge{\color{red}0}&\huge{\color{green}2}&\huge{\color{green}8}&\huge{\color{green}0}&\huge{\color{yellow}5}  \\[0.5ex]
+\hline
+\end{tabular} with a value of 2.80x$10^0$.
+\end{itemize}
+\item \textbf{n = 4:}
+\begin{itemize}
+\item \textbf{Multiplication}\\
+As n = 4, $a_{n}$ is $a_{4}$. Therefore the representation of 5x$a_{n}$ will be 5x2.80x$10^0$ = 1.40x$10^1$ which already has 3 significant digits and therefore no chopping takes place.\\
+Similarly doing the same for the $a_{n-1}$ term $a_{3}$, we have, 4x$a_{3}$ 4x2.90x$10^0$ = 1.16x$10^1$ represented as the same on the machine.
+\item \textbf{Subtraction}\\
+Subtracting the machine representation of $4a_{3}$ from that of $5a_{4}$ we get 2.40x$10^0$ which can be accurately represented in the machine as it has three significant digits.
+\item \textbf{Update}\\
+Therefore, $a_{5}$ will be represented as \begin{tabular}{|c|c|c|c|c|}
+\hline
+     \huge{\color{red}0}&\huge{\color{green}2}&\huge{\color{green}4}&\huge{\color{green}0}&\huge{\color{yellow}5}  \\[0.5ex]
+\hline
+\end{tabular} with a value of 2.40x$10^0$.
+\end{itemize}
+\item \textbf{n = 5:}
+\begin{itemize}
+\item \textbf{Multiplication}\\
+As n = 5, $a_{n}$ is $a_{5}$. Therefore the representation of 5x$a_{n}$ will be 5x2.40x$10^0$ = 1.20x$10^1$ which already has 3 significant digits and therefore no chopping takes place.\\
+Similarly doing the same for the $a_{n-1}$ term $a_{4}$, we have, 4x$a_{4}$ 4x2.80x$10^0$ = 1.12x$10^1$ represented as the same on the machine.
+\item \textbf{Subtraction}\\
+Subtracting the machine representation of $4a_{4}$ from that of $5a_{5}$ we get 8.00x$10^{-1}$ which can be accurately represented in the machine as it has three significant digits.
+\item \textbf{Update}\\
+Therefore, $a_{6}$ will be represented as \begin{tabular}{|c|c|c|c|c|}
+\hline
+     \huge{\color{red}0}&\huge{\color{green}8}&\huge{\color{green}0}&\huge{\color{green}0}&\huge{\color{yellow}4}  \\[0.5ex]
+\hline
+\end{tabular} with a value of 8.00x$10^{-1}$.
+\end{itemize}
+\item \textbf{n = 6:}
+\begin{itemize}
+\item \textbf{Multiplication}\\
+As n = 6, $a_{n}$ is $a_{6}$. Therefore the representation of 5x$a_{n}$ will be 5x8.00x$10^{-1}$ = 4.00x$10^0$ which already has 3 significant digits and therefore no chopping takes place.\\
+Similarly doing the same for the $a_{n-1}$ term $a_{5}$, we have, 4x$a_{5}$ 4x2.40x$10^0$ = 9.60x$10^0$ represented as the same on the machine.
+\item \textbf{Subtraction}\\
+Subtracting the machine representation of $4a_{5}$ from that of $5a_{6}$ we get -5.60x$10^{0}$ which can be accurately represented in the machine as it has three significant digits.
+\item \textbf{Update}\\
+Therefore, $a_{7}$ will be represented as \begin{tabular}{|c|c|c|c|c|}
+\hline
+     \huge{\color{red}1}&\huge{\color{green}5}&\huge{\color{green}6}&\huge{\color{green}0}&\huge{\color{yellow}5}  \\[0.5ex]
+\hline
+\end{tabular} with a value of -5.60x$10^{0}$.
+\end{itemize}
+	\end{itemize}
+	\end{solution}
+\end{parts}
+\question {\sc [Recurrence relation of an Integral]}\\
+Consider the following integral:
+$\textit{I}_{n} = \int_{0}^{1}x^{2n} \sin{(\pi x) }dx$
+\begin{parts}
+\part Obtain a recurrence for $\textit{I}_n$ in terms of $\textit{I}_{n−1}$.
+\begin{solution}
+\\
+Observe that the integral $\int_{0}^{1}x^{2n} \sin{(\pi x) }dx$ can be also viewed as $\int_{0}^{1}x^{2n}d\left(\frac{-\cos{(\pi x) }}{\pi}\right)$ as $d\left(\frac{-\cos{(\pi x) }}{\pi}\right) = \sin{(\pi x) }dx$. We can use this relationship to integrate the integral by parts.\\
+\begin{equation}\label{1}
+  \int_{a}^{b} udv = uv\large{|}_{a}^{b} - \int_{a}^{b} vdu   
+\end{equation}
+Using \ref{1} on our integral, we have,
+\begin{align*}
+   \int_{0}^{1}x^{2n} \sin{(\pi x) }dx &= \int_{0}^{1}x^{2n}d\left(\frac{-\cos{(\pi x) }}{\pi}\right) \\
+   &\Rightarrow
+   x^{2n}\left(\frac{-\cos{(\pi x) }}{\pi}\right)\Bigg{|}_{0}^{1} - \int_{0}^{1} \left(\frac{-\cos{(\pi x) }}{\pi}\right) d \left(x^{2n}\right)\\
+   &\Rightarrow
+    x^{2n}\left(\frac{-\cos{(\pi x) }}{\pi}\right)\Bigg{|}_{0}^{1} - \int_{0}^{1} \left(\frac{-\cos{(\pi x) }}{\pi}\right) 2n\left(x^{2n-1}\right)dx
+\end{align*}
+Now employing \ref{1} on the reduced integral obtained above, we have,
+\begin{align*}
+    \int_{0}^{1} \left(\frac{\cos{(\pi x) }}{\pi}\right) 2n\left(x^{2n-1}\right)dx &= \int_{0}^{1} 2n\left(x^{2n-1}\right)d\left(\frac{\sin{(\pi x) }}{\pi^2}\right) \mbox{ (As $d\left(\frac{\sin{(\pi x) }}{\pi^2}\right) = \left(\frac{\cos{(\pi x) }}{\pi}\right)dx$)}\\
+    &\Rightarrow
+    2n\left(x^{2n-1}\right)\left(\frac{\sin{(\pi x) }}{\pi^2}\right)\Bigg{|}_{0}^{1} - \int_{0}^{1} \left(\frac{\sin{(\pi x) }}{\pi^2}\right) d 2n\left(x^{2n-1}\right)\\
+    &\Rightarrow 
+    2n\left(x^{2n-1}\right)\left(\frac{\sin{(\pi x) }}{\pi^2}\right)\Bigg{|}_{0}^{1} - \int_{0}^{1} \left(\frac{\sin{(\pi x) }}{\pi^2}\right) (2n)\cdot (2n-1)\left(x^{2n-2}\right)dx\\
+    &\Rightarrow
+    2n\left(x^{2n-1}\right)\left(\frac{\sin{(\pi x) }}{\pi^2}\right)\Bigg{|}_{0}^{1} - \frac{2n\cdot 2n-1}{\pi^2} \textit{$I_{n-1}$}
+\end{align*}
+Plugging this in the larger expression we had earlier obtained, we get,
+\begin{align*}
+    \textit{$I_{n}$} &= x^{2n}\left(\frac{-\cos{(\pi x) }}{\pi}\right)\Bigg{|}_{0}^{1} + 2n\left(x^{2n-1}\right)\left(\frac{\sin{(\pi x) }}{\pi^2}\right)\Bigg{|}_{0}^{1} - \frac{2n\cdot 2n-1}{\pi^2} \textit{$I_{n-1}$}\\
+    &\Rightarrow 
+    (\frac{1}{\pi} - 0) + (0-0) - \frac{2n\cdot 2n-1}{\pi^2} \textit{$I_{n-1}$} \mbox{ (Computing the expressions within the limits)}
+\end{align*}
+Which gives us the recurrence,
+\begin{equation}\label{2}
+    \textit{$I_{n}$} = \frac{1}{\pi} - \frac{(2n)\cdot (2n-1)}{\pi^2} \textit{$I_{n-1}$}
+\end{equation}
+\end{solution}
+\part  Evaluate $\textit{I}_{0}$ by hand.
+\begin{solution}
+\\
+\begin{align*}
+  \textit{I}_{0} &= \int_{0}^{1}\sin{(\pi x)}dx &\mbox{ (Substituting n = 0 in $\textit{$I_{n}$}$)}\\
+  &\Rightarrow 
+  \frac{\pi}{\pi}\int_{0}^{1}\sin{(\pi x)}dx &\mbox{ (Multiplying and dividing by $\pi$)}\\
+  &\Rightarrow
+  \frac{1}{\pi}\int_{0}^{1}\sin{(\pi x)}d\pi x\\
+  &\Rightarrow
+  \frac{-1}{\pi}\cos{(\pi x)}\Bigg{|}_{0}^{1} &\mbox{ (As $\int \sin{(\pi x)}d\pi x = -\cos{(\pi x)}$)}\\
+  &\Rightarrow
+  \frac{1}{\pi}\left(\cos{(0)} - \cos{(\pi)}\right) &\mbox{ (Evaluating within the limits)}\\
+  &\Rightarrow
+  \frac{2}{\pi}
+\end{align*}
+Therefore $\textit{I}_{0} = \frac{2}{\pi} $
+\end{solution}
+\part Use the recurrence to obtain $\textit{I}_n$ for $n \in \{1, 2, \ldots, 15\}$ in MATLAB/Python.
+\begin{solution}
+\\
+ The recurrence was coded in python and the resulting output was rounded off to 7 decimal places to make it easier for us to compare it with the wolfram alpha output. The table below shows the values obtained.\\
+ 
+\begin{center}
+    \textbf{Values of the integral obtained using the recurrence relation}\\
+    \begin{tabular}{|c|c|}
+    \hline  
+    $\textit{I}_{0}$ & $6.36619800*10^{-1}$\\
+    \hline
+    $\textit{I}_{1}$ & $1.89303700*10^{-1}$\\
+    \hline
+    $\textit{I}_{2}$ & $8.81441000*10^{-2}$\\
+    \hline
+    $\textit{I}_{3}$ & $5.03839000*10^{-2}$\\
+    \hline
+    $\textit{I}_{4}$ & $3.24325000*10^{-2}$\\
+    \hline
+    $\textit{I}_{5}$ & $2.25607000*10^{-2}$\\
+    \hline
+    $\textit{I}_{6}$ & $1.65740000*10^{-2}$\\
+    \hline
+    $\textit{I}_{7}$ & $1.26785000*10^{-2}$\\
+    \hline
+    $\textit{I}_{8}$ & $1.00056000*10^{-2}$\\
+    \hline
+    $\textit{I}_{9}$ & $8.09380000*10^{-3}$\\
+    \hline
+    $\textit{I}_{10}$ & $6.68030000*10^{-3}$\\
+    \hline
+    $\textit{I}_{11}$ & $5.60460000*10^{-3}$\\
+    \hline
+    $\textit{I}_{12}$ & $4.85120000*10^{-3}$\\
+    \hline
+    $\textit{I}_{13}$ & $-1.18600000*10^{-3}$\\
+    \hline
+    $\textit{I}_{14}$ & $4.09155000*10^{-1}$\\
+    \hline
+    $\textit{I}_{15}$ & $-3.57484695*10^{+1}$\\
+    \hline
+    \end{tabular}
+\end{center}
+
+\end{solution}
+\part Use WolframAlpha to obtain $\textit{I}_n$ by directly performing the integral for $n \in \{1, 2, \ldots , 15\}$.
+\begin{solution}
+\\
+The approximate values of the integral obtained through Wolfram Alpha is given here as the original expressions involving $\pi$ are rather very large to be expressed here.
+\begin{center}
+    \textbf{Values of the integral obtained using Wolfram Alpha}\\
+    \begin{tabular}{|c|c|}
+    \hline  
+    $\textit{I}_{0}$ & $6.3662*10^{-1}$\\
+    \hline
+    $\textit{I}_{1}$ & $1.8930*10^{-1}$\\
+    \hline
+    $\textit{I}_{2}$ & $8.8144*10^{-2}$\\
+    \hline
+    $\textit{I}_{3}$ & $5.0384*10^{-2}$\\
+    \hline
+    $\textit{I}_{4}$ & $3.2433*10^{-2}$\\
+    \hline
+    $\textit{I}_{5}$ & $2.2561*10^{-2}$\\
+    \hline
+    $\textit{I}_{6}$ & $1.6574*10^{-2}$\\
+    \hline
+    $\textit{I}_{7}$ & $1.2679*10^{-2}$\\
+    \hline
+    $\textit{I}_{8}$ & $1.0006*10^{-2}$\\
+    \hline
+    $\textit{I}_{9}$ & $8.0938*10^{-3}$\\
+    \hline
+    $\textit{I}_{10}$ & $6.6802*10^{-3}$\\
+    \hline
+    $\textit{I}_{11}$ & $5.6060*10^{-3}$\\
+    \hline
+    $\textit{I}_{12}$ & $4.7708*10^{-3}$\\
+    \hline
+    $\textit{I}_{13}$ & $4.1089*10^{-3}$\\
+    \hline
+    $\textit{I}_{14}$ & $3.5754*10^{-3}$\\
+    \hline
+    $\textit{I}_{15}$ & $3.1393*10^{-3}$\\
+    \hline
+    \end{tabular}
+\end{center}
+
+
+\end{solution}
+\part  Explain your observations.
+\begin{solution}
+\\
+Comparing the values obtained directly from Wolfram Alpha and those obtained from python using the recurrence relation and tabulating the absolute difference across terms(rounded to 5 decimal places) where it is non-zero, we have,
+\begin{center}
+    \textbf{The absolute differences between the values}\\
+    \begin{tabular}{|c|c|} 
+    \hline
+    $\textit{I}_{12}$ & $8.000000*10^{-5}$\\
+    \hline
+    $\textit{I}_{13}$ & $5.290000*10^{-3}$\\
+    \hline
+    $\textit{I}_{14}$ & $4.055800*10^{-1}$\\
+    \hline
+    $\textit{I}_{15}$ & $3.575161*10^{+1}$\\
+    \hline
+    \end{tabular}
+\end{center}
+\begin{itemize}
+    \item 
+We can see that the integral values computed on python using the recurrence relation differ a lot from the wolfram alpha values as n grows larger and larger.
+\item This disparity is observed since every integral involves a term incorporating $\pi$ which is an irrational number.
+\item $\pi$ being irrational is not accurately representable on the machine.This causes the recurrence relation to produce erroneous values where the error gets larger as n grows larger.
+\item This inaccurate representation even leads to results that even contradict logic. For instance, we can see from the recurrence relation, that the sequence comprising the integral values is a decreasing sequence.However,this condition is not observed in the sequence comprising the values obtained through python.
+\end{itemize}
+\end{solution}
+\end{parts}
+\end{questions}
+\end{document}

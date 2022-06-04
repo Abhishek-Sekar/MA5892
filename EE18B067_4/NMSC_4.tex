@@ -1,0 +1,403 @@
+\documentclass[letterpaper]{exam}
+\printanswers
+\usepackage{hyperref}
+\usepackage[utf8x]{inputenc}
+\usepackage[table]{xcolor}
+\usepackage{listings}
+\usepackage{mdframed}
+\usepackage{lmodern}
+\usepackage[left=0.25in, right=0.25in, top=0.75in, bottom=0.75in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{subfigure}
+\usepackage{enumerate}
+\usepackage{tcolorbox}
+\usepackage{float}
+\pagestyle{headandfoot}
+
+\usepackage{cancel}
+\usepackage{placeins}
+\usepackage{multirow}
+\usepackage{algorithm2e}
+\pagecolor{black}
+\color{white}
+\hypersetup{%
+  colorlinks=true,% hyperlinks will be black
+  linkbordercolor=red,% hyperlink borders will be red
+  pdfborderstyle={/S/U/W 1}% border style will be underline of width 1pt
+}
+
+\newcommand{\soln}{\\ \textbf{Solution}: }
+\newcommand{\bkt}[1]{\left(#1\right)}
+\lhead{MA5892: Numerical Methods and Scientific Computing}
+
+\chead{Assignment: 4}
+
+\rhead{Rollnumber: EE18B067}
+
+\begin{document}
+\hrule
+\vspace{3mm}
+\noindent 
+\vspace{3mm}
+\noindent{{\sf Roll No:} EE18B067 \hfill  {\sf Name:Abhishek Sekar}}% put your ROLL NO AND NAME HERE
+
+\noindent
+{{\sf Date: \today }} %Date
+
+
+
+\vspace{3mm}
+\hrule
+\begin{questions}
+\question{\sc [Trapezoidal Rule]}\\
+Compute $\int_{0}^{1} e^{x^2} dx$ using the trapezoidal rule and the trapezoidal rule with end corrections using the first and third derivatives. Perform this by subdividing $\left[0,1\right]$ into N $\in \{2,5,10,20,50,100,200,500,1000\}$ panels and plot the decay of the absolute error using the \textbf{three methods}. The value of the integral accurate upto 16 digits is 1.4626517459071816.
+\begin{solution}
+\\
+\textbf{The methodologies:}\\
+For trapezoidal rule, we divide the interval $\left[0,1\right]$ into N panels with the $i^{th}$ panel denoted by $x_i$ and the absolute difference between two successive panels denoted by h.
+Then, the required variants of trapezoidal rule are given as follows.
+\begin{itemize}
+    \item Trapezoidal Rule:\\
+    \begin{align*}
+        \int_{0}^{1} e^{x^2} dx = \frac{h}{2}\cdot\left(e^{(x_0)^2}+e^{(x_N)^2}\right) + h\cdot\overset{N-1}{\underset{i=1}{\sum}} e^{(x_i)^2} + \mathcal{O}(h^2)
+    \end{align*}
+    Where, the final term signifies the error made by the trapezoidal rule.
+    \item Trapezoidal Rule with endpoint corrections using the first derivative:\\
+    The generalized trapezoidal rule with endpoint correction can be derived using the Euler Maclaurin sum(shown in the next subdivision) and the final expression makes use of Bernoulli numbers. The expression which corresponds to using the first derivative at the endpoints is given as,
+    \begin{align*}
+        \int_{0}^{1} e^{x^2} dx &= \frac{h}{2}\cdot\left(e^{(x_0)^2}+e^{(x_N)^2}\right) + h\cdot\overset{N-1}{\underset{i=1}{\sum}} e^{(x_i)^2} -\frac{b_2}{2!}h^2\cdot\left(2xe^{x^2}\huge{|}_{x=0}^{x=1}\right) + \mathcal{O}(h^4)\\
+        &\Rightarrow
+        \frac{h}{2}\cdot\left(e^{(x_0)^2}+e^{(x_N)^2}\right) + h\cdot\overset{N-1}{\underset{i=1}{\sum}} e^{(x_i)^2} -\frac{1}{6}h^2\cdot e + \mathcal{O}(h^4)
+    \end{align*}
+    Where we've used the fact that the second Bernoulli number $b_2$ is $\frac{1}{6}$ and that the first derivative of $e^{x^2}$ is $2xe^{x^2}$ 
+    \item Trapezoidal Rule with endpoint corrections using both the first and third derivatives:\\
+    \begin{align*}
+        \int_{0}^{1} e^{x^2} dx &= \frac{h}{2}\cdot\left(e^{(x_0)^2}+e^{(x_N)^2}\right) + h\cdot\overset{N-1}{\underset{i=1}{\sum}} e^{(x_i)^2} -\frac{b_2}{2!}h^2\cdot\left(2xe^{x^2}\Huge{|}_{x=0}^{x=1}\right) 
+        -\frac{b_4}{4!}h^4\cdot\left((8x^3+12x)e^{x^2}\Huge{|}_{x=0}^{x=1}\right)
+        +\mathcal{O}(h^6)\\
+        &\Rightarrow
+        \frac{h}{2}\cdot\left(e^{(x_0)^2}+e^{(x_N)^2}\right) + h\cdot\overset{N-1}{\underset{i=1}{\sum}} e^{(x_i)^2} -\frac{1}{6}h^2\cdot e + \frac{1}{36}h^4\cdot e + \mathcal{O}(h^6)
+    \end{align*}
+     Where we've used the fact that the fourth Bernoulli number $b_4$ is $-\frac{1}{30}$ and that the third derivative of $e^{x^2}$ is $(8x^3+12x)e^{x^2}$ 
+\end{itemize}
+\newpage
+\textbf{The Plots:}\\
+The loglog plots of the decay of the absolute error is given below for the three methods.
+\begin{figure}[H]  
+     \centering
+     %\begin{subfigure}[b]{0.3\textwidth}
+         %\centering
+    \includegraphics[width=10cm]{1.png}
+     \label{fig:Dendrogram for the problem 3(c)}
+     %\end{subfigure}
+     \caption{Loglog plot of error using Trapezoidal Rule}
+\end{figure}
+\begin{figure}[H]  
+     \centering
+     %\begin{subfigure}[b]{0.3\textwidth}
+         %\centering
+    \includegraphics[width=10cm]{2.png}
+     \label{fig:Dendrogram for the problem 3(c)}
+     %\end{subfigure}
+     \caption{Loglog plot of error using Trapezoidal Rule with end corrections using just the first derivative}
+\end{figure}
+\begin{figure}[H]  
+     \centering
+     %\begin{subfigure}[b]{0.3\textwidth}
+         %\centering
+    \includegraphics[width=10cm]{3.png}
+     \label{fig:Dendrogram for the problem 3(c)}
+     %\end{subfigure}
+     \caption{Loglog plot of error using Trapezoidal Rule with end corrections using the first derivative and the third derivatives}
+\end{figure}
+\newpage
+\textbf{Observations}
+\begin{itemize}
+    \item As we'd expect, the last method is the best, while plain Trapezoidal Rule is the worst.
+    \item We see that the rate of decay of the absolute error follow the same trends derived above.
+    \item Thus we can conclude that the three methods do a good job at estimating the given integral even for moderately large values of N.
+\end{itemize}
+\end{solution}
+\question{\sc[Euler-Macluarin approximation]}\\
+Use the Euler-Macluarin to obtain
+\begin{align*}
+    \text{log}\left(n!\right) = \text{log}\left(\huge{C}\left(\frac{n}{e}\right)^{n}\sqrt{n} \right) + \mathcal{O}\left(\frac{1}{n}\right)
+\end{align*}
+where C is some constant.
+\begin{solution}
+\\
+\textbf{The Euler Maclaurin sum:}\\
+Let g(x) be a function defined in $\left[c,d\right]$ where c,d $\in 
+\mathcal{Z}$ and let it have (p+1) derivatives.\\
+Then the Euler Maclaurin sum is written as follows,
+\begin{align}\label{1}
+\overset{d}{\underset{n=c}{\sum}} g(n) = \int_{c}^{d} g(x) dx + \left(\frac{g(c)+g(d)}{2}\right) + \overset{p}{\underset{k=1}{\sum}} \frac{b_{2k}}{(2k)!}\left(g^{2k-1}(d) - g^{2k-1}(c)\right) - \int_{c}^{d} \frac{B_{2p}(\{t\})}{(2p)!}g^{2p}(t) dt 
+\end{align}
+Where $\{t\}$ refers to the fractional part of t.
+\textbf{Applying it to log(n!):}\\
+In the equation \ref{1}, let us use g(x) = log(x), c = 1 and d = n and p = 1. This construction is valid as the second derivative of log(x) exists. Here, we're making use of the fact that log(n!) = $ \overset{n}{\underset{k=1}{\sum}} \log{k}$.So with this in our hand, applying the Euler Maclaurin sum yields,
+\begin{align*}
+ \overset{n}{\underset{k=1}{\sum}} \log{n} &= \int_{1}^{n} \log{x} dx + \left(\frac{\log{1}+\log{n}}{2}\right) + \frac{b_{2}}{2!}\left(\frac{1}{x}\Huge{|}_{x=1}^{x=n}\right) - \int_{1}^{n} \frac{B_{2}(\{t\})}{2!}\cdot\frac{1}{t^2} dt\\
+ &\Rightarrow 
+  \int_{1}^{n} \log{x} dx + \left(\frac{\log{n}}{2}\right) + \frac{b_{2}}{2!}\left(\frac{1}{n} - 1\right) - \int_{1}^{n} \frac{B_{2}(\{t\})}{2!}\cdot\frac{1}{t^2} dt & \mbox{ (As log(1) = 0)}
+\end{align*}
+Now, using the fact that $\int \log{x}dx = x(\log{x} - 1)$ and $B_{2}(x) = x^2 -x + \frac{1}{6}$, we have,
+\begin{align*}
+   \log{n!} &=  x(\log{x} - 1) \Huge{|}_{x=1}^{x=n}+ \left(\frac{\log{n}}{2}\right) + \frac{1}{12}\left(\frac{1}{n} - 1\right) - \int_{1}^{n} \frac{B_{2}(\{t\})}{2!}\cdot\frac{1}{t^2} dt &\mbox{ (As $b_2 = \frac{1}{6}$)}\\
+   &\Rightarrow
+   n\log{n} - n + 1 + \left(\frac{\log{n}}{2}\right) + \frac{1}{12}\left(\frac{1}{n} - 1\right) - \int_{1}^{n} \frac{B_{2}(\{t\})}{2t^2} dt
+\end{align*}
+Analyzing the final integral, we see that we can impose a trivial bound on $B_{2}(\{t\})$. We know that $0 \leq \{t\} < 1$. Therefore, we can assert that, $B_{2}(\{t\}) < B_{2}(1) $ as $B_2(t) = t^2 -t + \frac{1}{6}$ is an increasing function in the interval $[0.5,\infty]$  which can be observed by taking a look at it's first derivative $2t -1$ which is always positive in the interval. Besides this, we also see that $B_{2}(0) = B_2(1) = \frac{1}{6}$, therefore using the previous inference, we see that, $B_{2}(\{t\})< \frac{1}{6} < 2$.Using this, we can find an upper bound for the integral $\int_{1}^{n} \frac{B_{2}(\{t\})}{2t^2} dt$.\\
+\begin{align*}
+    \int_{1}^{n} \frac{B_{2}(\{t\})}{2t^2} dt &< \int_{1}^{n} \frac{2}{2t^2} dt\\
+    &<
+    \frac{-1}{t}\Huge{|}_{t = 1}^{t=n}\\
+    &<
+    1 - \frac{1}{n}
+\end{align*}
+Therefore, with this, we can say that $\int_{1}^{n} \frac{B_{2}(\{t\})}{2t^2} dt = 1 - \frac{1}{n} - k$ where k is a positive constant which appropriately converts the above inequality to an equality.\\
+Using this in the earlier equation we derived, we have,
+\begin{align*}
+    \log{n!} &=  n\log{n} - n + 1 + \left(\frac{\log{n}}{2}\right) + \frac{1}{12}\left(\frac{1}{n} - 1\right) - \int_{1}^{n} \frac{B_{2}(\{t\})}{2t^2} dt\\
+    &\Rightarrow
+    n\log{n} - n + 1 + \left(\frac{\log{n}}{2}\right) + \frac{1}{12}\left(\frac{1}{n} - 1\right) - \left(1 - \frac{1}{n} - k\right)\\
+    &
+    \mbox{ Clubbing all the constants into a single constant log(C) and clubbing all the $\frac{1}{n}$ terms together, we have}\\
+    &\Rightarrow
+    n\log{\frac{n}{e}} + \log{\sqrt{n}} + \mathcal{O}\left(\frac{1}{n}\right) + \log{C} \\
+    &\Rightarrow
+    \text{log}\left(C\left(\frac{n}{e}\right)^n\cdot\sqrt{n}\right) + \mathcal{O}\left(\frac{1}{n}\right)
+\end{align*}
+Hence, we've obtained that, $\text{log}\left(n!\right) = \text{log}\left(\huge{C}\left(\frac{n}{e}\right)^{n}\sqrt{n} \right) + \mathcal{O}\left(\frac{1}{n}\right)$ for an appropriate constant C.
+\end{solution}
+\question{\sc[Stirling Formula]}\\
+We will now determine C in the above question as follows.
+\begin{parts}
+\part Use integration by parts to obtain an expression for $I_k = \int_{0}^{\frac{\pi}{2}} \text{sin}^{k}(x)dx$.\\
+(Hint: It might be easier to look at the even and the odd cases separately)
+\begin{solution}
+\\
+\textbf{Deriving a recurrence relation for $I_k$}\\
+We have $I_k = \int_{0}^{\frac{\pi}{2}} \text{sin}^{k}(x)dx$. Inspecting $I_k$ and substituting k = 0, we have $I_0 = \frac{\pi}{2}$ while substituting k = 1, yields $\int_{0}^{\frac{\pi}{2}} \text{sin}(x)dx = 1$.\\
+With this information in hand, we can integrate $I_k$ by parts, i.e., $\int udv = uv - \int v du$, by taking u = $\text{sin}^{k-1}(x)$ and v = -cos(x).
+\begin{align*}
+    \int_{0}^{\frac{\pi}{2}} \text{sin}^{k}(x)dx &=  -\text{sin}^{k-1}(x)\text{cos}(x) \Huge{|}_{x=0}^{x=\frac{\pi}{2}} +\int_{0}^{\frac{\pi}{2}} (k-1) \sin{ ^{k-2} (x)}\cos{ ^2(x)} dx\\
+    &\text{The first term evaluates to 0, so we're left with}\\
+    &\Rightarrow
+    \int_{0}^{\frac{\pi}{2}} (k-1)\text{sin}^{k-2}(x)\left(1-\text{sin}^2(x)\right)dx & \mbox{ (As $\text{cos}^2(x) = 1 - \text{sin}^2(x)$}\\
+    &\Rightarrow 
+    \int_{0}^{\frac{\pi}{2}} (k-1)\text{sin}^{k-2}(x) dx -  \int_{0}^{\frac{\pi}{2}} (k-1)\text{sin}^{k}(x)dx\\
+    &\Rightarrow 
+    (k-1)I_{k-2} - (k-1)I_{k}
+\end{align*}
+Therefore, from this, we have,
+\begin{align}\label{2}
+    I_{k} = \frac{k-1}{k}I_{k-2}
+\end{align}
+Using this recurrence relation and the values of $I_0$ and $I_1$ we derived earlier, we can find the value of any $I_k$ as follows,
+\begin{itemize}
+    \item Case 1: k = 2n,i.e., k is even
+    \begin{align*}
+        I_{2n} &= \frac{2n-1}{2n}I_{2n-2}\\
+        &\Rightarrow
+        \frac{2n-1}{2n}\cdot \frac{2n-3}{2n-2}\cdot I_{2n-4}\\
+        &\text{Repeating the above step till we hit $I_0$, we have}\\
+        &\Rightarrow
+         \overset{n}{\underset{k=1}{{\mathlarger{\mathlarger{\Pi}}}}}  \left(\frac{2k-1}{2k}\right)I_{0}\\
+        &\Rightarrow
+        \frac{\pi}{2}\cdot \overset{n}{\underset{k=1}{\mathlarger{\mathlarger{\Pi}}}} \left(\frac{2k-1}{2k}\right)
+    \end{align*}
+    \item Case 2: k = 2n+1, i.e., k is odd
+    \begin{align*}
+        I_{2n+1} &= \frac{2n}{2n+1}I_{2n-1}\\
+        & \text{Following the same steps as the prev case, we have}\\
+        &\Rightarrow
+        \overset{n}{\underset{k=1}{{\mathlarger{\mathlarger{\Pi}}}}}  \left(\frac{2k}{2k+1}\right)I_{1}\\
+        &\Rightarrow
+         \overset{n}{\underset{k=1}{\mathlarger{\mathlarger{\Pi}}}} \left(\frac{2k}{2k+1}\right)
+    \end{align*}
+\end{itemize}
+Thus, we have the following expressions for $I_k$
+\begin{align}\label{3}
+    I_{k} &= \begin{cases}
+    \frac{\pi}{2}\cdot \overset{n}{\underset{k=1}{\mathlarger{\mathlarger{\Pi}}}} \left(\frac{2k-1}{2k}\right) & \text{k = 2n}\\
+    \overset{n}{\underset{k=1}{\mathlarger{\mathlarger{\Pi}}}} \left(\frac{2k}{2k+1}\right) & \text{k = 2n+1}
+    \end{cases}
+\end{align}
+\end{solution}
+\part Prove that $I_k$ is a monotone decreasing sequence.
+\begin{solution}
+\\
+In the given interval $\left[0,\frac{\pi}{2}\right]$, sin(x) is a monotonically increasing function with 0 $\leq$ sin(x) $\leq$ 1 with equality attained at the endpoints.\\
+Therefore, using this, we can assert that $\text{sin}^{k}(x) \leq \text{sin}^{k-1}(x)$ in the given interval, $\forall $ x $\in \left(0,\frac{\pi}{2}\right) $ with equality attained at the endpoints.\\
+Therefore, by this, as the above inequality holds $\forall$ x in the interval, we can extend this to the integrals $I_k,I_{k-1}$.\\
+Thus, we have $I_k \leq I_{k-1} \forall k \in \mathbb{N}$ making $I_k$ a monotonically decreasing sequence. 
+\end{solution}
+\part Show that
+\begin{align*}
+    \underset{m \rightarrow \infty}{\text{lim } } \frac{I_{2m-1}}{I_{2m+1}} = 1
+\end{align*}
+\begin{solution}
+\\
+From the result in the previous subdivision, we have,\\
+\begin{align*}
+    \frac{I_{2m-1}}{I_{2m+1}} \geq 1
+\end{align*}
+as $I_{k}$ is a monotonically decreasing sequence $\forall k \in \mathbb{N}$.\\
+From \ref{2}, we have, 
+\begin{align*}
+    \frac{I_{2m-1}}{I_{2m+1}}  = \frac{2m+1}{2m}
+\end{align*}
+Thus, we can devise an inequality from either side for $\frac{I_{2m-1}}{I_{2m+1}}$.
+\begin{align*}
+ & 1 \leq \frac{I_{2m-1}}{I_{2m+1}} \leq \frac{2m+1}{2m} \\
+& \underset{m \rightarrow \infty}{\text{lim } } 1 \leq \underset{m \rightarrow \infty}{\text{lim } } \frac{I_{2m-1}}{I_{2m+1}} \leq \underset{m \rightarrow \infty}{\text{lim } } \frac{2m+1}{2m} 
+\end{align*}
+Invoking the Sandwich Theorem, we see that $\underset{m \rightarrow \infty}{\text{lim } } \frac{I_{2m-1}}{I_{2m+1}} = 1$.
+\end{solution}
+\part Conclude that
+\begin{align*}
+    \underset{m \rightarrow \infty}{\text{lim } } \frac{I_{2m}}{I_{2m+1}} = 1
+\end{align*}
+\begin{solution}
+\\
+Proceeding as we did with the previous case, since $I_{k}$ is a monotonically decreasing sequence, we have,
+\begin{align*}
+    &I_{2m+1} \leq I_{2m} \leq I_{2m-1}\\
+    &\text{Dividing throughout by $I_{2m+1}$}\\
+    & 1 \leq \frac{I_{2m}}{I_{2m+1}} \leq \frac{I_{2m-1}}{I_{2m+1}} &\mbox{ (As $I_{k} > 0 \mbox{ } \forall k \in \mathbb{N}$)}\\
+    & \underset{m \rightarrow \infty}{\text{lim } }1 \leq \underset{m \rightarrow \infty}{\text{lim } } \frac{I_{2m}}{I_{2m+1}} \leq \underset{m \rightarrow \infty}{\text{lim } } \frac{I_{2m-1}}{I_{2m+1}}
+\end{align*}
+Invoking the Sandwich Theorem yet again, we see that $\underset{m \rightarrow \infty}{\text{lim } } \frac{I_{2m}}{I_{2m+1}} = 1$ as $\underset{m \rightarrow \infty}{\text{lim } } \frac{I_{2m-1}}{I_{2m+1}} = 1$.
+\end{solution}
+\part Hence, infer that the central binomial coefficient is asymptotically given by
+\begin{align*}
+    {}^{2m} C_m \sim \frac{4^m}{\sqrt{m\pi}}
+\end{align*}
+where $f(m) \sim g(m) \Rightarrow \underset{m \rightarrow \infty}{\text{lim } }\frac{f(m)}{g(m)} = 1$
+\begin{solution}
+\\
+\textbf{Expanding ${}^{2m} C_m$}\\
+Let us try expanding ${}^{2m} C_m$.
+\begin{align*}
+    {}^{2m} C_m &= \frac{(2m)!}{(m!)\cdot (m!)}\\
+    &\Rightarrow 
+    \frac{2m\cdot (2m-1)\cdot (2(m-1))\ldots 3\cdot 2\cdot 1}{m\cdot (m-1)\ldots1\cdot (m!)} \\
+    &\Rightarrow
+    \frac{2m\cdot (2(m-1))\ldots 2\cdot 1}{m\cdot (m-1)\cdot 1}\cdot \frac{(2m-1)\cdot (2m-3)\ldots 3\cdot 1}{m!}\\
+    &\Rightarrow
+    2^m \cdot \frac{(2m-1)\cdot (2m-3)\ldots 3\cdot 1}{m!} &\mbox{ (Cancelling common terms)}\\
+    &\Rightarrow 2^m \overset{m}{\underset{k=1}{\mathlarger{\mathlarger{\Pi}}}} \left(\frac{2k-1}{k}\right)
+\end{align*}
+\textbf{Alternative way to arrive at a similar expression}
+\\
+Using the results of the previous two subdivisions, we have,
+$\underset{m \rightarrow \infty}{\text{lim } } \frac{I_{2m}}{I_{2m-1}} = \underset{m \rightarrow \infty}{\text{lim } } \frac{\frac{I_{2m}}{I_{2m+1}}}{\frac{I_{2m-1}}{I_{2m+1}}} = \frac{\underset{m \rightarrow \infty}{\text{lim } } \frac{I_{2m}}{I_{2m+1}}}{\underset{m \rightarrow \infty}{\text{lim } } \frac{I_{2m-1}}{I_{2m+1}}} = 1$\\
+From \ref{3}, we have, $I_{2m} = \frac{\pi}{2}\cdot \overset{m}{\underset{k=1}{\mathlarger{\mathlarger{\Pi}}}} \left(\frac{2k-1}{2k}\right)$ and  $I_{2m-1} = \overset{m-1}{\underset{k=1}{\mathlarger{\mathlarger{\Pi}}}} \left(\frac{2k}{2k+1}\right)$. Multiplying and dividing $I_{2m-1}$ by 2m and changing the indices of the product to match that of $I_{2m}$, we have,
+$I_{2m-1} = \frac{1}{2m} \cdot \overset{m}{\underset{k=1}{\mathlarger{\mathlarger{\Pi}}}} \left(\frac{2k}{2k-1}\right) $.\\
+Using this, we obtain,
+\begin{align*}
+    \frac{I_{2m}}{I_{2m-1}} &= \frac{\frac{\pi}{2}\cdot \overset{m}{\underset{k=1}{\mathlarger{\mathlarger{\Pi}}}} \left(\frac{2k-1}{2k}\right)}{\frac{1}{2m} \cdot \overset{m}{\underset{k=1}{\mathlarger{\mathlarger{\Pi}}}} \left(\frac{2k}{2k-1}\right)}\\
+    &\Rightarrow 
+    m\pi \cdot \left(\overset{m}{\underset{k=1}{\mathlarger{\mathlarger{\Pi}}}} \left(\frac{2k-1}{2k}\right)\right)^2\\
+    &\Rightarrow
+    \frac{m \pi}{4^m} \cdot \left(\overset{m}{\underset{k=1}{\mathlarger{\mathlarger{\Pi}}}} \left(\frac{2k-1}{k}\right)\right)^2
+\end{align*}
+Comparing this with the expression for ${}^{2m} C_m$, we see that,
+\begin{align*}
+    \frac{I_{2m}}{I_{2m-1}} &= \frac{m \pi}{4^m} \cdot \left(\overset{m}{\underset{k=1}{\mathlarger{\mathlarger{\Pi}}}} \left(\frac{2k-1}{k}\right)\right)^2\\
+    &\Rightarrow
+    \frac{m \pi}{4^m} \cdot \frac{\left({}^{2m} C_m\right)^2}{4^m}\\
+    &\Rightarrow 
+    \left(\frac{\left({}^{2m} C_m\right)}{\frac{4^m}{\sqrt{m \pi}}}\right)^2
+\end{align*}
+We see that,$\underset{m \rightarrow \infty}{\text{lim } } \frac{I_{2m}}{I_{2m-1}} = 1$ and therefore, $\underset{m \rightarrow \infty}{\text{lim } } \left(\frac{\left({}^{2m} C_m\right)}{\frac{4^m}{\sqrt{m \pi}}}\right)^2 = 1$ too. For this to happen, $\underset{m \rightarrow \infty}{\text{lim } } \left(\frac{\left({}^{2m} C_m\right)}{\frac{4^m}{\sqrt{m \pi}}}\right)$ must be 1 as the above limit can be expressed as the limit of the square of a function which in this case is also the square of the limit of the same function as the limit is finite.\\
+Therefore, by the definition of asymptotic behaviour, we have shown that,
+${}^{2m} C_m \sim \frac{4^m}{\sqrt{m\pi}}$.
+\end{solution}
+\part Hence conclude that C in the above question is $\sqrt{2\pi}$.
+\begin{solution}
+\\
+Using the expression derived in the second question, we have,
+\begin{align*}
+    &\text{log}\left(n!\right) = \text{log}\left(\huge{C}\left(\frac{n}{e}\right)^{n}\sqrt{n} \right) + \mathcal{O}\left(\frac{1}{n}\right)\\
+    &n! = \left(\huge{C}\left(\frac{n}{e}\right)^{n}\sqrt{n} \right)\cdot e^{\mathcal{O}\left(\frac{1}{n}\right)}
+\end{align*}
+Plugging this into the expression for ${}^{2m} C_m$, we have,
+\begin{align*}
+    {}^{2m} C_m &= \frac{(2m)!}{(m!)\cdot(m!)}\\
+    &\Rightarrow
+    \frac{\left(\huge{C}\left(\frac{2m}{e}\right)^{2m}\sqrt{2m} \right)\cdot e^{\mathcal{O}\left(\frac{1}{2m}\right)}}{\left(\huge{C}\left(\frac{m}{e}\right)^{m}\sqrt{m} \right)^2\cdot e^{2\mathcal{O}\left(\frac{1}{m}\right)}}\\
+    &\Rightarrow
+    \frac{4^m\sqrt{2m}}{Cm}\cdot e^{\mathcal{O}\left(\frac{1}{m}\right)}\\
+    &\Rightarrow
+    \frac{4^m\sqrt{2}}{C\sqrt{m}}\cdot e^{\mathcal{O}\left(\frac{1}{m}\right)}
+\end{align*}
+In the previous subdivision, we saw that,$\underset{m \rightarrow \infty}{\text{lim } } \left(\frac{\left({}^{2m} C_m\right)}{\frac{4^m}{\sqrt{m \pi}}}\right) = 1$.\\Substituting the above expression for ${}^{2m} C_m$, we get,
+$\underset{m \rightarrow \infty}{\text{lim } } \left(\frac{\frac{4^m\sqrt{2}}{C\sqrt{m}}\cdot e^{\mathcal{O}\left(\frac{1}{m}\right)}}{\frac{4^m}{\sqrt{m \pi}}}\right) = 1$.\\
+As m $\rightarrow \infty$, $e^{\mathcal{O}\left(\frac{1}{m}\right)} \rightarrow 1$. Therefore, we have $\underset{m \rightarrow \infty}{\text{lim } }\frac{\sqrt{2\pi}}{C} = 1$. Hence C =  $\sqrt{2\pi}$.
+\end{solution}
+\part Hence, obtain the Stirling Formula:
+\begin{align*}
+    n! \sim \left(\frac{n}{e}\right)^n \sqrt{2\pi n}
+\end{align*}
+\begin{solution}
+\\
+As we saw,as m $\rightarrow \infty$, $e^{\mathcal{O}\left(\frac{1}{m}\right)} \rightarrow 1$. Therefore, we have, $n! \sim \left(\huge{C}\left(\frac{n}{e}\right)^{n}\sqrt{n} \right)$. Substituting for C derived in the previous subdivision, we obtain the Stirling Formula, $n! \sim \left(\frac{n}{e}\right)^n \sqrt{2\pi n}$.
+\end{solution}
+\part Obtain the relative error in $n!$ using the Stirling formula for n $\in {20,50}$.
+\begin{solution}
+\\
+\textbf{Relative Error:}\\
+The expression for relative error is 
+\begin{align*}
+    \left|\frac{ n! - \left(\frac{n}{e}\right)^n \sqrt{2\pi n} }{n!}\right|
+\end{align*}
+We can however remove the modulus as stirling approximation is a lower bound.\\
+Substituting n $\in \{20,50\}$, we get,(rounded to 7 decimal places)
+\begin{center}
+    \begin{tabular}{|c|c|}
+         \hline
+         n& \text{error}  \\
+         \hline
+         20& 0.0041577 \\
+         \hline
+         50 & 0.0016653\\
+         \hline
+    \end{tabular}
+\end{center}
+\end{solution}
+\part Obtain a better estimate for $n!$, which is accurate upto $\mathcal{O}\left(\frac{1}{n^3}\right)$.
+\begin{solution}
+\\
+Proceeding as we did in the second question, referring to \ref{1} and plugging  g(x) = log(x), c = 1 and d = n and p = 3, we have,
+\begin{align*}
+ \overset{n}{\underset{k=1}{\sum}} \log{n} &= \int_{1}^{n} \log{x} dx + \left(\frac{\log{1}+\log{n}}{2}\right) + \frac{b_{2}}{2!}\left(\frac{1}{x}\Huge{|}_{x=1}^{x=n}\right) + \frac{b_{4}}{4!}\left(\frac{-2}{x^3}\Huge{|}_{x=1}^{x=n}\right)  - \int_{1}^{n} \frac{B_{4}(\{t\})}{4!}\cdot\frac{-6}{t^4} dt\\
+ &\Rightarrow
+  n\log{n} - n + 1 + \left(\frac{\log{n}}{2}\right) + \frac{1}{12}\left(\frac{1}{n} - 1\right) - \frac{1}{720}\left(2 - \frac{2}{n^3}\right) - \int_{1}^{n} \frac{B_{4}(\{t\})}{4!}\cdot\frac{-6}{t^4} dt
+\end{align*}
+We can see that $B_4(x) = x^4-2x^3+x^2-\frac{1}{30}$. On observing the derivative of this function, $4x^3 - 6x^2 + 2x = 4x(x-0.5)(x-1)$,we see that the function is decreasing in the interval $\left(0.5,1\right)$ and increasing in the interval $\left(0,0.5\right)$. Additionally, we see that x=0 and x=1 correspond to local minima  and that x = 0.5 corresponds to a local maximum of this function on observing the second derivative at these values. Thus, we see that $B_4(\{t\}) \leq B_4(0.5) < 12$. Thus, as in the previous case, we see that,
+\begin{align*}
+    \int_{1}^{n} \frac{B_{4}(\{t\})}{4!}\cdot\frac{-6}{t^4} dt &< \int_{1}^{n} \frac{-72}{4!t^4}dt\\
+    &<
+    \int_{1}^{n} \frac{-3}{t^4}dt\\
+    &<
+    \frac{1}{t^3} |_{x=1}^{x=n}\\
+    &< \frac{1}{n^3} - 1
+\end{align*}
+Therefore, for an appropriate positive constant k, we have, $\int_{1}^{n} \frac{B_{4}(\{t\})}{4!}\cdot\frac{-6}{t^4} dt = \frac{1}{n^3} - 1 -k$. Using this and as in the previous case, clubbing all $\mathcal{O}(\frac{1}{n^3})$ and the constant terms together, we get,
+\begin{align*}
+    \text{log}(n!) &= n\log{n} - n + \frac{\log{n}}{2} + \frac{1}{12n} + \log C + \mathcal{O}\left(\frac{1}{n^3}\right)\\
+    &\Rightarrow 
+    \text{log}\left(\huge{C}\left(\frac{n}{e}\right)^{n}\sqrt{n} \right) + \frac{1}{12n} + \mathcal{O}\left(\frac{1}{n^3}\right)
+\end{align*}
+From this, taking anti-log on both sides, we have, $n! = \left(\huge{C}\left(\frac{n}{e}\right)^{n}\sqrt{n} \right)\cdot e^{\frac{1}{12n}}\cdot e^{\mathcal{O}\left(\frac{1}{n^3}\right)}$.\\
+As we saw before, as $n \rightarrow \infty$, $e^{\frac{1}{12n}}\cdot e^{\mathcal{O}\left(\frac{1}{n^3}\right)} \rightarrow 1$. Therefore, the problem asymptotically reduces to the one we've already solved before, the Stirling Formula. Therefore, C in the above expression is again equal to $\sqrt{2\pi}$.\\
+Hence, a better estimate of n! accurate upto $\mathcal{O}\left(\frac{1}{n^3}\right)$ is given by $n! \sim \left(\left(\frac{n}{e}\right)^{n}\sqrt{2 \pi n} \right)\cdot e^{\frac{1}{12n}} $
+\end{solution}
+\end{parts}
+\end{questions}
+\end{document}

@@ -1,0 +1,443 @@
+\documentclass[letterpaper]{exam}
+\printanswers
+\usepackage{hyperref}
+\usepackage[utf8x]{inputenc}
+\usepackage[table]{xcolor}
+\usepackage{listings}
+\usepackage{mdframed}
+\usepackage{lmodern}
+\usepackage[left=0.25in, right=0.25in, top=0.75in, bottom=0.75in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{subfigure}
+\usepackage{enumerate}
+\usepackage{tcolorbox}
+\usepackage{float}
+\pagestyle{headandfoot}
+
+\usepackage{cancel}
+\usepackage{placeins}
+\usepackage{multirow}
+\usepackage{algorithm2e}
+\pagecolor{black}
+\color{white}
+\hypersetup{%
+  colorlinks=true,% hyperlinks will be black
+  linkbordercolor=red,% hyperlink borders will be red
+  pdfborderstyle={/S/U/W 1}% border style will be underline of width 1pt
+}
+
+\newcommand{\soln}{\\ \textbf{Solution}: }
+\newcommand{\bkt}[1]{\left(#1\right)}
+\lhead{MA5892: Numerical Methods and Scientific Computing}
+
+\chead{Assignment: 5}
+
+\rhead{Rollnumber: EE18B067}
+
+\begin{document}
+\hrule
+\vspace{3mm}
+\noindent 
+\vspace{3mm}
+\noindent{{\sf Roll No:} EE18B067 \hfill  {\sf Name:Abhishek Sekar}}% put your ROLL NO AND NAME HERE
+
+\noindent
+{{\sf Date: \today }} %Date
+
+
+
+\vspace{3mm}
+\hrule
+\begin{questions}
+\question{\sc [Equioscillation Theorem]}\\
+Prove the Equioscillation theorem.\\
+\textbf{Equioscillation theorem:} Let f $\in C\left[-1,1\right]$ and p(x) be a polynomial whose degree doesn't exceed n. p minimizes $\parallel f-p\parallel_{\infty}$ iff f-p equioscillates at n+2 points.
+\begin{solution}
+\\
+\textbf{Trivial Case}\\
+If f is a polynomial of degree n or lower, we see that the equioscillation theorem is trivially satisfied as we can set p(x) = f(x). So, we just have to prove this for other cases of f(x).
+\\
+\textbf{Proof by contradiction:}\\
+Let us assume that there are at least n+2 points where the approximation error,i.e., f(x) - p(x), equioscillates and that the polynomial p(x) with degree $\leq n$ isn't the optimal minimizer of the error.\\
+In that case, we can construct a set M containing the maxima values of the absolute error as follows,
+\begin{align*}
+    M = \left\{x \in [-1,1]: f(x) - p(x) \mbox{ equioscillates at x}\right\}
+\end{align*}
+By our assumption, M has at least n+2 points.\\
+Now, since our polynomial p(x) isn't the optimal approximator, we can add another polynomial q(x) of order $\leq$ n  appropriately, such that p(x) + q(x) results in the optimal approximation amongst polynomials of degree n.Mathematically, this can be written as,
+\begin{align*}
+    \left| f(x)-(p(x)+q(x))\right| < \left| f(x)-p(x)\right| \forall x \in M 
+\end{align*}
+This follows from the definition of the infinite norm,
+\begin{align*}
+    \parallel f(x)-p(x)\parallel_{\infty} = \underset{x \in [-1,1]}{max } \left| f(x)-p(x)\right| = \left| f(x)-p(x)\right| \forall x \in M 
+\end{align*}
+Thus, the optimal approximation results in a maxima of lesser magnitude for the approximation error.\\
+For the above inequality to be true, we see that, q(x) should be of the same sign as f(x) - p(x) as only then will the magnitude of the error go down.\\
+Therefore,we have,
+\begin{align*}
+    (f(x) - p(x))q(x) > 0 \forall x \in M
+\end{align*}
+Now, for this to be true, q(x) should accompany (f(x) - p(x)) in all its sign changes and thus q(x) should have n+2-1 roots (as every sign change results in a root and there are n+2-1 sign changes) which arises a contradiction as q(x) is of degree $\leq$ n.\\
+Therefore, our original assumption was incorrect and we see that p(x) minimizes $\parallel f(x)-p(x)\parallel_{\infty}$ if f(x)-p(x) equioscillates at n+2 points. 
+\\
+\textbf{Proof for the converse:}
+\\
+Now, let us try proving it the other way around, i.e.,if p(x) minimizes $\parallel f(x)-p(x)\parallel_{\infty}$, then f(x)-p(x) equioscillates at n+2 points. \\
+Let us try proving that the number of equioscillation points cannot be less than n+2 and thus f(x) - p(x) necessarily have to oscillate at at least n+2 points.\\
+For simplicity, let us denote $\|f(x) - p(x)\|_{\infty}$ by E and f(x) - p(x) by e(x).\\
+Let us partition e(x) into upper and lower sections.  Upper sections contain a single maxima of e(x) stemming from the equioscillation and doesn't enclose any minima. Similarly, lower sections contain a single minima of e(x) and no maxima. Thus, using this construction, we can partition $[-1,1]$ into alternating sections.\\
+\textbf{Lemma 1}\label{L1}\\
+For every upper section, we have, $-E+\epsilon \leq e(x) \leq E$\\
+For every lower section, we have, $-E \leq e(x) \leq E - \epsilon$
+\\
+\textbf{Proof of the Lemma:}\\
+As the upper section just encloses a maxima, we can say that all values of e(x) has to be below E. Similarly, as the upper section does not enclose the minima, we observe that e(x) can be lower bounded by the sum of the minima and some positive constant $\epsilon_{i}$. Take the maximum of $\epsilon_{i}$ across all the inequalities and define it to be $\epsilon$. For this $\epsilon$, the lemma holds true. A similar argument holds for the lower section case.
+\\
+\textbf{Lemma 2}\label{L2}\\
+If e(x) has n+1 alternating points, then there exists a polynomial q(x) such that, $\|f(x) - (p(x)+q(x))\|_{\infty} < E$.
+\\
+\textbf{Proof of the Lemma:}\\
+Since there are n+1 alternating points, there will be n+1 alternating sections. Let these sections be the following intervals, $\left\{[-1,x_1],[x_1,x_2],\ldots, [x_{n-1},x_{n}],[x_{n},1]\right\}$ as our interval of interest is $[-1,1]$. Let us define a polynomial r(x) = $\overset{n}{\underset{k=1}{\mathlarger{\mathlarger{\Pi}}}} x -x_{k}$.\\
+We see that, the sign of r(x) remains consistent for all x belonging to a particular section. Additionally, we can see that if we pick x $\in (x_{i},x_{i+1})$, then $x > x_{k} : k \leq i$ and $x < x_{k} : k \geq i+1 $. \\
+Thus, using this, as the sections alternate between upper and lower sections, we see that the sign of r(x) is consistent for x from any upper section and for x from any lower section it is of the opposite sign. \\
+Let us multiply a constant c = $\pm 1$ to r(x) to make it positive in the upper sections and negative in the lower ones.\\
+Let us define the polynomial q(x) = $k\cdot c\cdot r(x)$ where k is a positive scaling constant that ensures, $\left|k\cdot r(x)\right| < \epsilon \forall x \in [-1,1]$ for the $\epsilon$ we saw in \ref{L1}.\\
+With this construction ready, we can see that, $\forall$ x in a lower section, $-E < e(x) - q(x) < E$. This is easily observed if x is an interior point of a lower section or are the endpoints of the interval (-1 or 1 should they be the endpoints of a lower section), as then q(x) < 0 by our construction. Invoking Lemma \ref{L1}, we have $-E \leq e(x) $ and as q(x) $<$ 0 subtracting it from e(x) results in $-E \leq e(x) -  q(x)$. This lower bound holds for the case when x is one of the $x_{i}$ as well as then q(x) = 0.\\
+From Lemma \ref{L1}, we see that $e(x) \leq E - \epsilon$.\\
+Therefore, we have,
+\begin{align*}
+\left|e(x) - q(x)\right| &\leq \left|e(x)\right| + \left|q(x)\right| & \mbox{ (Triangle Inequality)}\\
+& <
+E-\epsilon + \epsilon &\mbox{ ( From \ref{L1} and as q(x) $< \epsilon$)}
+\end{align*}
+Thus, we have shown that $-E < e(x) - q(x) < E$. \\
+Likewise, using a similar approach, we can see that this inequality holds for the upper sections too and therefore, we can conclude that $\underset{x \in [-1,1]}{max } \left|e(x) - q(x) \right| < E$ and therefore, we've proved the Lemma. 
+Using this lemma, we see that, should f(x) - p(x) equioscillate at less than n+2 points, then we can find a better approximation for f(x) which results in a contradiction.Therefore, f(x)-p(x) should equioscillate at at least n+2 points.\\
+\textbf{Last step of the proof:}\\
+Now, if we show that the p(x) that minimizes the approximation error is unique, then it necessarily has to oscillate at n+2 points from the first part of the proof.\\
+Let us prove the uniqueness clause by contradiction. Let us assume q(x) is another polynomial of degree $\leq$ n which also results in the best approximation for f(x).\\
+Then we can see that $\frac{p(x) + q(x)}{2}$ is also a polynomial which results in the best approximation as,
+\begin{align*}
+    \left|\frac{1}{2}\left(\left(f(x) - p(x)\right)+\left(f(x) - q(x)\right)\right)\right| \leq \frac{1}{2}\left(\left|e(x)\right| + \left|f(x) - q(x) \right| \right) \leq E.
+\end{align*}
+From this, we see that as both f(x) - p(x) and f(x) - q(x) have at least n+2 alternating points. Moreover, these alternating points are maxima or minima and thus, the value of p(x) agrees with q(x) at these points which can only be true if q(x) = p(x) as q(x) is of order $\leq n$.\\
+Thus, we've proved the equioscillation theorem.
+\end{solution}
+\question{\sc [Function Approximations]}\\
+Consider the function f(x) = $\left|x\right|$ on the interval [-1,1].
+\begin{parts}
+  \part Prove that of all polynomials whose degree doesn't exceed 3, p(x) = $x^2 + \frac{1}{8}$ is the best approximation in the $\|.\|_{\infty}$ norm. 
+  \begin{solution}
+  \\
+  \textbf{The error:}\\
+  Let us denote the error made by the approximation as e(x), where,
+  \begin{align*}
+      e(x) &= f(x) - p(x)\\
+      &\Rightarrow
+      \left|x\right| - x^2 - \frac{1}{8}
+  \end{align*}
+  Shown below is a plot of the function e(x) in the interval [-1,1].
+  \begin{figure}[H]  
+     \centering
+     %\begin{subfigure}[b]{0.3\textwidth}
+         %\centering
+    \includegraphics[width=10cm]{Q2.png}
+     \label{fig:Dendrogram for the problem 3(c)}
+     %\end{subfigure}
+     \caption{Plot of e(x)}
+\end{figure}
+From the plot, we can make the following observations.
+\begin{itemize}
+    \item There are five local maxima and local minima points for e(x) in the interval [-1,1].
+    \item All of these above points result in e(x) having a magnitude of 0.125.
+    \item The maxima and the minima are alternating.
+    \item Thus, we see that e(x) equioscillates at 5 points.
+\end{itemize}
+From the equioscillation theorem derived above, if e(x) equioscillates at n+2 points , then p(x) of degree n is the best approximation for f(x) in the $\|.\|_{\infty}$ norm sense.\\
+We observe that the p(x) given in the question is of degree $3 = 5-2$. \\
+Therefore, p(x) = $x^2 + \frac{1}{8}$ provides the best approximation for f(x) = $\left|x\right|$ amongst polynomials of degree atmost three in the $\|.\|_{\infty}$ norm sense.
+  \end{solution}
+  \part Interpolate the function using 4 Legendre nodes and Chebyshev nodes. Call the polynomials obtained as $p_{L}(x)$ and $p_{C}(x)$.\\
+  Fill in the table below. You should be able to complete the table by hand.\\
+  \begin{centering}
+  \begin{tabular}{|c|c|c|}
+  \hline
+       Approximation& $\|.\|_{2}$&$\|.\|_{\infty}$  \\
+ \hline
+ f(x)-p(x) & & \\
+ \hline
+ f(x)-$p_{L}$(x) & & \\
+ \hline
+ f(x)-$p_{C}$(x) & & \\
+ \hline
+  \end{tabular}
+  \end{centering}
+  \\
+  Comment on the errors you obtain using the different norm. Which one is optimal under the $\|.\|_{2}$ and $\|.\|_{\infty}$? For each norm, order the different approximations in increasing order of accuracy.
+ \begin{solution}
+ \\
+ \textbf{The nodes of approximation:}\\
+ As we're approximating using 4 nodes, we consider the monic legendre and monic chebyshev polynomials.\\
+ The polynomials are given below,
+ \begin{align*}
+     l_4(x) &= x^4 - \frac{6}{7}x^2 + \frac{3}{35} &\mbox{ (Monic Legendre polynomial)}\\
+     c_4(x) &= x^4 - x^2 + \frac{1}{8} &\mbox{ (Monic Chebyshev polynomial of the second kind)}
+ \end{align*}
+ The nodes are nothing but the roots of these two polynomials described above.\\
+ Thus we obtain the nodes $\{x_1,x_2,x_3,x_4\}$ to be $\{-0.86113631, -0.33998104,  0.33998104,  0.86113631\}$ for the legendre polynomial and $\{0.92387953  0.38268343 -0.38268343 -0.92387953\}$ for the chebyshev polynomial. The roots were computed by hand and verified numerically using a python package and the expression for the chebyshev nodes given below.
+ \begin{align*}
+     x_k = \cos{\left(\left(\frac{2k+1}{2n+2}\right)\pi\right)}
+ \end{align*}
+ where n is the total number of nodes.
+ \\
+ \textbf{Approximation strategy:}\\
+ Once the nodes were obtained, the function f(x) was approximated using lagrange polynomials in the fashion given below.
+ \begin{align*}
+ p(x) &= \overset{n}{\underset{i=1}{\mathlarger{\mathlarger{\sum}}}} f(x_i)L_i(x) &\mbox{ (The approximation)}\\
+ L_i(x) &= \overset{n}{\underset{j \neq i}{\underset{j=1}{\mathlarger{\mathlarger{\Pi}}}}} \frac{(x - x_j)}{(x_i-x_j)} &\mbox{ (The $i^{th}$ lagrange polynomial)} 
+ \end{align*}
+ Thus, using this approach we obtain the approximating polynomials as,
+ \begin{align*}
+     p_L(x) &= -4.44089209850063\cdot 10^{-16}\cdot x^3 + 0.832558114066254 \cdot x^2 + 1.66533453693773\cdot 10^{-16} \cdot x + 0.243748057275345\\
+     p_C(x) &= -1.11022302462516\cdot 10^{-16} \cdot x^3 + 0.765366864730179 \cdot x^2 + 8.32667268468867\cdot 10^{-17} \cdot x + 0.270598050073099
+ \end{align*}
+ For simplifying the hand calculations, the coefficients of the odd powers of x were taken to be 0 as they were very small. However, while checking the calculations numerically, the accurate values were considered.\\
+ Thus we get the approximate expressions for the polynomials as,
+ \begin{align*}
+     p_L(x) &\sim  0.832558114066254 \cdot x^2  + 0.243748057275345\\
+     p_C(x) &\sim  0.765366864730179 \cdot x^2 +  0.270598050073099
+ \end{align*}
+ \textbf{Computing the norms}\\
+ Given below are the expressions for $\|g(x)\|_2$ and $\|g(x)\|_\infty$.
+ \begin{align*}
+    \|g(x)\|_2 &= \sqrt{\int_{-1}^{1} \left|g(x)\right|^2 dx} \\
+    \|g(x)\|_\infty &= \underset{[-1,1]}{\text{max} } \left|g(x)\right|
+ \end{align*}
+ Let us compute $\|f(x) - p(x)\|_2$.\\
+ As derived in the previous subdivision, we have,
+ f(x)-p(x) = e(x) = $\left|x\right| - x^2 - \frac{1}{8}$.
+ Therefore,
+ \begin{align*}
+     \left(\|e(x)\|_2\right)^2 &= \int_{-1}^{1} \left|e(x)\right|^2 dx\\
+     &\Rightarrow 
+     \int_{-1}^{1} \left|\left|x\right| - x^2 - \frac{1}{8}\right|^2 dx\\
+     &\Rightarrow
+     2\cdot \int_{0}^{1} \left(-x +x^2 + \frac{1}{8}\right)^2 dx &\mbox{ (As e(x) is even)}\\
+     &\Rightarrow 
+     2\cdot \int_{0}^{1} x^4 + \left(x - \frac{1}{8}\right)^2 - 2x^2\cdot\left(x - \frac{1}{8}\right) dx\\
+     &\Rightarrow
+     2\cdot \int_{0}^{1} x^4 - 2x^3 + \frac{5}{4}x^2 - \frac{1}{4}x + \frac{1}{64} dx \\
+     &\Rightarrow
+     2\cdot\left( \frac{1}{5} - \frac{1}{2} + \frac{5}{12} - \frac{1}{8} + \frac{1}{64}\right)\\
+     &\Rightarrow 
+     \frac{7}{480} = 0.0146
+ \end{align*}
+ Therefore,we have $\|e(x)\|_2 = \sqrt{0.0146} = 0.12076$ \\
+ We repeat the above procedure to compute the 2-norm of the error for the other two interpolants.\\
+ From this we get, $\|e_L(x)\|_2 = \|f(x) - p_L(x)\|_2 = 0.11523$ and $\|e_C(x)\|_2 = \|f(x) - p_C(x)\|_2 = 0.13041$.\\
+ As seen in the previous section, we have $\|e(x)\|_\infty = 0.125$ as it is the maximum absolute value of the error in the interval [-1,1].\\
+ We observe that the approximation error $e_L(x)$ and $e_C(x)$ are both even.\\ Thus, the errors are symmetric about the y-axis and we can just analyze them over the interval [0,1].\\
+ The errors are of the form $x - ax^2 - b$ in the interval [0,1].\\
+ This has a critical point at $x = \frac{1}{2a}$. Probing further and analyzing the second derivative of the error, we see that the critical point is a local maxima. \\
+ Substituting this value of x into the above polynomial, we get the value at the maxima to be $\frac{1}{4a} - b$.\\
+ Let us analyze the value at the endpoints of the interval.\\
+ At x = 0, the value is -b and at x = 1, the value is 1-(a+b).\\
+ Comparing the magnitude for all these three values for $e_C(x)$ and $e_P(x)$, we see that the highest magnitude is obtained for x = 0 as seen below.
+ \begin{center}
+     \begin{tabular}{|c|c|c|c|}
+         \hline
+          e(x)&$\left|-b\right|$&$\left|1-(a+b)\right|$&$\left|\frac{1}{4a} - b\right|$  \\
+          \hline 
+          $e_C(x)$&0.27060& 0.03597&0.05604\\
+          \hline
+          $e_L(x)$&0.24375&0.07631&0.05653\\
+          \hline
+     \end{tabular}
+ \end{center}
+ Therefore, we fill the given table as,
+ \begin{center}
+    \begin{tabular}{|c|c|c|}
+  \hline
+       Approximation& $\|.\|_{2}$&$\|.\|_{\infty}$  \\
+ \hline
+ f(x)-p(x) &0.12076 &0.125 \\
+ \hline
+ f(x)-$p_{L}$(x) &0.11523 & 0.24375 \\
+ \hline
+ f(x)-$p_{C}$(x) & 0.13041&0.27060 \\
+ \hline
+  \end{tabular} 
+ \end{center}
+ \textbf{Order of accuracy}
+ \begin{itemize}
+     \item For the $\|.\|_\infty$ norm case, the order of accuracy follows the trends, $p_C(x)$ $<$ $p_L(x)$ $<$ p(x).
+     \item For the $\|.\|_2$ norm case, the order of accuracy follows the trends, $p_C(x) < p(x) < p_L(x)$.
+ \end{itemize}
+ Therefore, from the above ordering, we see that under the $\|.\|_2$ norm case, the most optimal one is $p_L(x)$ while for the $\|.\|_\infty$ norm case, the most optimal one is $p(x)$ which matches what we'd expect theoretically as well.
+ \end{solution}
+\end{parts}
+\question{\sc [Error Estimate of Gaussian Quadrature]}\\
+Prove that
+\begin{align*}
+    \int_{a}^{b} w(x)f(x) dx - \overset{n}{\underset{i=1}{\sum}} w_if(x_i) = \frac{f^{(2n)}(\xi)}{(2n)!} \|p_n(x)\|_{w}^2
+\end{align*}
+for some $\xi \in (a,b)$ and $p_n(x)$ is the monic orthogonal polynomial corresponding to the weight function w(x).
+\begin{solution}
+\\
+\textbf{Hermite Schemes:}\\
+Consider a polynomial h(x) of degree $< 2n$ such that,
+$h(x_i) = f(x_i)$ and $h^{'}(x_i) = f^{'}(x_i)$ where $x_i$ are the roots of the monic orthogonal polynomial $p_n(x)$. Such polynomials can be constructed as they're of degree $< 2n$ and the coefficients of each power can be solved by a linear system incorporating all the above constraints.\\
+Consider the integral $\int_{a}^{b} w(x)h(x) dx$. Let us show that this integral is equivalent to $\overset{n}{\underset{i=1}{\sum}}w_ih(x_i)$ for appropriate $w_i$. We can write $h(x) = \overset{n}{\underset{i=1}{\sum}}h(x_i)p_i(x)$, where $p_i(x)$ is a polynomial of order $\leq \text{order}(h)$. Then, employing a method we saw in class, we have,
+\begin{align*}
+    \int_{a}^{b} w(x)h(x) dx &= \int_{a}^{b} w(x)\cdot \overset{n}{\underset{i=1}{\sum}}h(x_i)p_i(x)\\
+    &\Rightarrow 
+    \overset{n}{\underset{i=1}{\sum}}h(x_i)\cdot \left(\int_{a}^{b} w(x)p_i(x) dx\right) 
+\end{align*}
+If we denote $\int_{a}^{b} w(x)p_i(x) dx$ by $w_i$, then we have, $\int_{a}^{b} w(x)h(x) dx = \overset{n}{\underset{i=1}{\sum}}w_ih(x_i) = \overset{n}{\underset{i=1}{\sum}}w_if(x_i) $ by construction.
+\\
+Therefore, the error term, $\int_{a}^{b} w(x)f(x) dx - \overset{n}{\underset{i=1}{\sum}} w_if(x_i)$ in the question reduces to $\int_{a}^{b} w(x)\left(f(x) - h(x)\right) dx$.\\
+By using the theorem on polynomial interpolation error we saw in class, we see that,
+\begin{align}
+    f(x) - h(x) = \frac{f^{(2n)}(\zeta_{x})}{(2n)!}\overset{n}{\underset{k = 1}{\mathlarger{\mathlarger{\Pi}}}}\left(x-x_k\right)^2
+\end{align}
+Let us prove this.
+\\ \textbf{Proof:}\\
+Consider a polynomial function w(x) = $\overset{n}{\underset{k = 1}{\mathlarger{\mathlarger{\Pi}}}}\left(x-x_k\right)^2$. This is a polynomial of degree 2n vanishing at all $x_k$.\\
+Using this we can construct another function $g_x(t) = f(t) - h(t) - \frac{f(x)-h(x)}{w(x)}\cdot w(t)$.\\
+We see that $g_x(t)$ vanishes at t = $x_k \forall k$. Additionally, if we substitute t = x, we see that $g_x(t)$ vanishes. Thus, $g_x(t)$ has at least n+1 zeroes ( n zeroes at the nodes and one zero at t=x).\\
+\textbf{Rolle's Theorem}\\
+For a differentiable function f(x) with f(a) = f(b) = 0 for some a,b in it's domain, there exists $f^{'}(c) = 0$ for some c $\in (a,b)$.
+Invoking Rolle's theorem, we thus see that $g^{1}_x(t)$ has at least n zeroes with each zero lying between successive zeroes of $g_x(t)$. Moreover, repeating the above procedure for $f^{'}(t) and h^{'}(t)$ we see that we'll again get zeroes at the nodes due to the way we constructed h(x), i.e., $h^{'}(x_i) = f^{'}(x_i)$. Therefore, we see that $g^{1}_x(t)$ has an additional n zeros at the nodes and thus has a total of 2n zeroes.\\
+Invoking Rolle's theorem again, we see that, $g^{2}_x(t)$ will have 2n-1 zeroes.Thus, repeatedly invoking Rolle's theorem, we see that, there exists at least one zero on the interval $[a,b]$ for $g^{(2n)}_x(t)$.\\
+Let this zero occur at some $\zeta_{x} \in [a,b]$.\\
+Looking at the expression for $g^{(2n)}_x(t)$, we see that,
+\begin{align*}
+    g^{(2n)}_x(t) &= f^{(2n)}(t) - h^{(2n)}(t) - \left( \frac{f(x)-h(x)}{w(x)}\right)\cdot w^{(2n)}(t)\\
+    &\Rightarrow 
+    f^{(2n)}(t) - \left( \frac{f(x)-h(x)}{w(x)}\right)\cdot w^{(2n)}(t) & \mbox{ (As degree(h) $<$ 2n)}\\
+    &\Rightarrow 
+    f^{(2n)}(t) - \left( \frac{f(x)-h(x)}{w(x)}\right)\cdot (2n)! & \mbox{ ($w^{(2n)}(t) = 2n!$ as it is monic and of degree 2n)}
+\end{align*}
+Substituting t = $\zeta_{x}$, we have,
+\begin{align*}
+    0 = g^{(2n)}_x(\zeta_{x}) &= f^{(2n)}(\zeta_{x}) - \left( \frac{f(x)-h(x)}{w(x)}\right)\cdot (2n)!
+\end{align*}
+Or from this, we have, $f(x) - h(x) = \frac{f^{(2n)}(\zeta_{x})}{(2n)!}\overset{n}{\underset{k = 1}{\mathlarger{\mathlarger{\Pi}}}}\left(x-x_k\right)^2$ where we substitute back w(x).\\
+Therefore, using this in the expression for error we had, we get,
+\begin{align*}
+    \int_{a}^{b} w(x)\left(f(x) - h(x)\right) dx = \int_{a}^{b} w(x)\left(\frac{f^{(2n)}(\zeta_{x})}{(2n)!}\overset{n}{\underset{k = 1}{\mathlarger{\mathlarger{\Pi}}}}\left(x-x_k\right)^2\right) dx
+\end{align*}
+Invoking the mean value theorem of integral calculus, we see that the above integral can be expressed by 
+$\frac{f^{(2n)}(\xi)}{(2n)!}\overset{n}{\underset{k = 1}{\mathlarger{\mathlarger{\Pi}}}}\left(x-x_k\right)^2$. The term  $\overset{n}{\underset{k = 1}{\mathlarger{\mathlarger{\Pi}}}}\left(x-x_k\right)^2$ is nothing but $\|p_n(x)\|_{w}^2$ as that is how we constructed the nodes. Thus we've shown that the error estimate for Gaussian Quadrature takes the form, $\frac{f^{(2n)}(\xi)}{(2n)!} \|p_n(x)\|_{w}^2$
+\end{solution}
+\question{\sc[Trapezoidal Rule]}\\
+Let f(x) be periodic function on [0,1] of the form\\
+\begin{align*}
+    f(x) = a_0 + \overset{n}{\underset{k=1}{\sum}}\left(a_k \cos{2k\pi x} + b_k \sin{2k \pi x}\right)
+\end{align*}
+Take the case of n=20, and $a_k,b_k$ are uniformly distributed on [-1,1]. Approximate $\int_{-1}^{1} f(x) dx$ using trapezoidal rule with k points where k $\in \{1,2, \ldots, 80\}$. Compare the error with the exact integral and comment on the result you obtain. Prove that the trapezoidal rule gives you the exact integral for k $>$ n.
+\begin{solution}
+\\
+\textbf{Plot of the error:}\\
+\begin{figure}[H]
+\centering
+\includegraphics[width = 10cm]{4.png}
+\label{fig:Question 4}
+\caption{Plot of the absolute error made by TR}
+\end{figure}
+As we can see from the plot above, trapezoidal rule using more than 20 nodes exactly computes the integral. Let us examine why this happens.\\
+\textbf{Note:} Here we've considered the integral $\int_{0}^{1} f(x) dx$ instead as the original integral would need more than 40 points for the Trapezoidal Rule to exactly compute the integral.\\
+\textbf{True value of the integral}\\
+As the integral spans across [0,1], which spans an integral number of periods of the sinusoids, the integral reduces to,
+\begin{align*}
+   \int_{0}^{1}\left( a_0 + \overset{n}{\underset{k=1}{\sum}}\left(a_k \cos{2k\pi x} + b_k \sin{2k \pi x}\right)\right) dx = a_0 + 0 = a_0
+\end{align*}
+\textbf{Approximating using TR:}\\
+Let us take the number of points used for the trapezoidal rule to be N and we include both the endpoints, $\{0,1\}$.\\
+Then, we have the nodes,$x_i = \frac{i}{N-1} \forall i \in \{0,1,2,\ldots,N-1\}$.\\
+Therefore, from this, h = $\frac{1}{N-1}$.\\
+Approximating the integral using trapezoidal rule, we get,
+\begin{align*}
+    \int_{0}^{1} f(x) dx &\sim h \cdot \left(\frac{f(0) + f(1)}{2}\right) + h \cdot \left( \overset{N-2}{\underset{i = 1}{\mathlarger{\mathlarger{\sum}}}} f(x_i)\right)\\
+    &\text{Substituting for h and f(x), we have,}\\
+    &\Rightarrow \frac{1}{N-1}\cdot \left( \frac{2 \cdot \left(a_0 + \overset{n}{\underset{k = 1}{\mathlarger{\mathlarger{\sum}}}} a_k\right)}{2}\right) + \frac{1}{N-1} \cdot \left( \overset{N-2}{\underset{i = 1}{\mathlarger{\mathlarger{\sum}}}} \left( a_0 + \overset{n}{\underset{k=1}{\sum}}\left(a_k \cos{2k\pi x_i} + b_k \sin{2k \pi x_i}\right)\right)\right)\\
+    &\Rightarrow
+    \frac{a_0}{N-1}+\frac{\overset{n}{\underset{k = 1}{\mathlarger{\mathlarger{\sum}}}} a_k}{N-1} + \frac{(N-2)\cdot a_0}{N-1} + \frac{1}{N-1} \cdot \left( \overset{N-2}{\underset{i = 1}{\mathlarger{\mathlarger{\sum}}}} \left( \overset{n}{\underset{k=1}{\sum}}\left(a_k \cos{2k\pi x_i} + b_k \sin{2k \pi x_i}\right)\right)\right)\\
+    &\Rightarrow
+    a_0 + \frac{\overset{n}{\underset{k = 1}{\mathlarger{\mathlarger{\sum}}}} a_k}{N-1} + \frac{1}{N-1} \cdot \left( \overset{n}{\underset{k=1}{\sum}}\left(a_k \cdot \left( \overset{N-2}{\underset{i = 1}{\mathlarger{\mathlarger{\sum}}}}\cos{2k\pi x_i}\right) + b_k \cdot \left( \overset{N-2}{\underset{i = 1}{\mathlarger{\mathlarger{\sum}}}}\sin{2k \pi x_i}\right) \right)\right)\\
+    &\Rightarrow
+    a_0 +  \frac{\overset{n}{\underset{k = 1}{\mathlarger{\mathlarger{\sum}}}} a_k}{N-1} + \frac{1}{N-1} \cdot \left(\overset{n}{\underset{k=1}{\sum}}\left(a_k \cdot A_k + b_k \cdot B_k \right)\right)
+\end{align*}
+Where $A_k = \left( \overset{N-2}{\underset{i = 1}{\mathlarger{\mathlarger{\sum}}}}\cos{2k\pi x_i}\right) $ and $B_k = \left( \overset{N-2}{\underset{i = 1}{\mathlarger{\mathlarger{\sum}}}}\sin{2k \pi x_i}\right)$.\\
+\textbf{Some relations:}\\
+\begin{align}
+\label{1}
+     \overset{N-1}{\underset{i = 0}{\mathlarger{\mathlarger{\sum}}}}\cos{\left(\alpha + i\beta\right)} &= \frac{\cos{\left(\frac{2\alpha + (N-1)\beta}{2}\right)}\sin{\left(\frac{N\beta}{2}\right)}}{\sin{\left(\frac{\beta}{2}\right)}}  
+\end{align}
+\begin{align}
+    \label{2}
+     \overset{N-1}{\underset{i = 0}{\mathlarger{\mathlarger{\sum}}}}\sin{\left(\alpha + i\beta\right)} &= \frac{\sin{\left(\frac{2\alpha + (N-1)\beta}{2}\right)}\sin{\left(\frac{N\beta}{2}\right)}}{\sin{\left(\frac{\beta}{2}\right)}}
+\end{align}
+\newpage
+\textbf{Examining $A_k$ and $B_k$:}\\
+Using the relations \ref{1},\ref{2} described above, let us examine $A_k$ and $B_k$.
+\begin{align*}
+    A_k &= \left( \overset{N-2}{\underset{i = 1}{\mathlarger{\mathlarger{\sum}}}}\cos{2k\pi x_i}\right)\\
+    &\Rightarrow 
+    \left( \overset{N-2}{\underset{i = 0}{\mathlarger{\mathlarger{\sum}}}}\cos{2k\pi x_i}\right) - 1\\
+    &\text{Substituting for $x_i$ and using \ref{1} with $\beta = \left( \frac{2k\pi }{N-1}\right)$ and $\alpha = 0$, we have}\\
+    &\Rightarrow
+    \frac{\cos{\left(\frac{ (N-2)\cdot \left( \frac{2k\pi }{N-1}\right)}{2}\right)}\sin{\left(\frac{(N-1) \cdot\left( \frac{2k\pi }{N-1}\right)}{2}\right)}}{\sin{\left(\frac{\left( \frac{2k\pi }{N-1}\right)}{2}\right)}} - 1\\
+    &\Rightarrow
+    \frac{\cos{\left(\frac{ (N-2)\cdot \left( k\pi \right)}{(N-1)}\right)}\sin{ k\pi }}{\sin{\left(\frac{\left( k\pi \right)}{(N-1)}\right)}} - 1\\
+    &\Rightarrow
+    0 - 1 &\mbox{ ($\sin{k\pi} = 0$)}\\
+    &\Rightarrow
+    -1
+\end{align*}
+Here we are making the assumption $\sin{\left(\frac{\left( k\pi \right)}{(N-1)}\right)} \neq 0 \forall k$.\\
+Similarly, we see that, for the $B_k$ case,
+\begin{align*}
+    B_k &= \left( \overset{N-2}{\underset{i = 1}{\mathlarger{\mathlarger{\sum}}}}\sin{2k \pi x_i}\right)\\
+    &\Rightarrow
+    \left( \overset{N-2}{\underset{i = 0}{\mathlarger{\mathlarger{\sum}}}}\sin{2k \pi x_i}\right)\\
+    &\Rightarrow
+    \frac{\sin{\left(\frac{ (N-2)\cdot \left( k\pi \right)}{(N-1)}\right)}\sin{ k\pi }}{\sin{\left(\frac{\left( k\pi \right)}{(N-1)}\right)}}\\
+    &\Rightarrow 
+    0
+\end{align*}
+Thus, for this our original trapezoidal rule expression reduces to $a_0$ which is equivalent to the true value of the integral.\\
+However, for this to happen, we need, $\sin{\left(\frac{\left( k\pi \right)}{(N-1)}\right)} \neq 0 \forall k$, therefore, k has to be co-prime with N-1 $\forall$ k. To satisfy this condition, $N-1 > n$. Therefore, when we use more than 20 panels, trapezoidal rule exactly computes the integral.
+\end{solution}
+\question{\sc[Gaussian Quadrature]}\\
+Evaluate $\int_{-1}^{1}e^{-x^2} dx$ using the Gaussian quadrature with n nodes, where n $\in \{ 3,4,5,\ldots,51\}$. Plot the absolute error as a function of N on a log-log plot.
+\begin{solution}
+\\
+\textbf{Gaussian Quadrature}\\
+We implement the gaussian quadrature using legendre nodes using the expression,
+\begin{align}
+   \int_{-1}^{1}e^{-x^2} dx = \overset{n}{\underset{i = 0}{\mathlarger{\mathlarger{\sum}}}} w_i\cdot e^{-x_i^2} 
+\end{align}
+Where $w_i = \int_{-1}^{1} L_i^{(n)}(x) dx$, the integral of the $i^{th}$ lagrange polynomial of degree n and $x_i$ are the legendre nodes.\\
+The error is of the order $\mathcal{O}\left(\frac{1}{2n!}\right)$ as derived in question 3.\\
+\textbf{Plot}
+\begin{figure}[H]
+\centering
+\includegraphics[width = 10cm]{5.png}
+\label{Fig5}
+\caption{Loglog plot of the absolute error}
+\end{figure}
+\textbf{Observations}
+\begin{itemize}
+    \item We see that the error rapidly reduces to the order of machine precision in about 10-11 nodes.
+    \item We see that the error follows the $\frac{1}{2n!}$ curve which is what we'd expect theoretically.
+    \item Thus the gaussian quadrature does an amazing job at estimating the integral.
+\end{itemize}
+\end{solution}
+\end{questions}
+\end{document}
+

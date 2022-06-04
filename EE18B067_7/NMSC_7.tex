@@ -1,0 +1,210 @@
+\documentclass[letterpaper]{exam}
+\printanswers
+\usepackage{hyperref}
+\usepackage[utf8x]{inputenc}
+\usepackage[table]{xcolor}
+\usepackage{listings}
+\usepackage{mdframed}
+\usepackage{lmodern}
+\usepackage[left=0.25in, right=0.25in, top=0.75in, bottom=0.75in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{subfigure}
+\usepackage{enumerate}
+\usepackage{tcolorbox}
+\usepackage{float}
+\pagestyle{headandfoot}
+
+\usepackage{cancel}
+\usepackage{placeins}
+\usepackage{multirow}
+\usepackage{algorithm2e}
+\pagecolor{black}
+\color{white}
+\hypersetup{%
+  colorlinks=true,% hyperlinks will be black
+  linkbordercolor=red,% hyperlink borders will be red
+  pdfborderstyle={/S/U/W 1}% border style will be underline of width 1pt
+}
+
+\newcommand{\soln}{\\ \textbf{Solution}: }
+\newcommand{\bkt}[1]{\left(#1\right)}
+\lhead{MA5892: Numerical Methods and Scientific Computing}
+
+\chead{Assignment: 7}
+
+\rhead{Rollnumber: EE18B067}
+
+\begin{document}
+\hrule
+\vspace{3mm}
+\noindent 
+\vspace{3mm}
+\noindent{{\sf Roll No:} EE18B067 \hfill  {\sf Name:Abhishek Sekar}}% put your ROLL NO AND NAME HERE
+
+\noindent
+{{\sf Date: \today }} %Date
+
+
+
+\vspace{3mm}
+\hrule
+\begin{questions}
+\question{\sc[Numerical O.D.E]}\\
+Consider the non-linear ordinary differential equation
+\begin{align*}
+    y^{'} + y(1-y) = 0
+\end{align*}
+with y(0) = $\frac{1}{2}$.
+\begin{itemize}
+    \item Write a code to solve the above to obtain y(1) using
+    \begin{itemize}
+        \item Euler Explicit
+        \item Euler Implicit
+        \item Trapezoidal Rule
+        \item RK2
+        \item RK4
+    \end{itemize}
+    For each of the above, identify for what time stepping the scheme is stable, and the overall global accuracy.
+\end{itemize}
+\begin{solution}
+\\
+\textbf{The true value:}\\
+On solving the differential equation,
+\begin{align*}
+    &\frac{dy}{dt} = y(y-1) \\
+    &\frac{dy}{y(y-1)} = dt\\
+    &\int \frac{dy}{y(y-1)} = \int dt\\
+    &\int \frac{1}{y-1} - \frac{1}{y} dy = t + c\\
+    &\log{\left|\frac{y-1}{y} \right|}= t+c\\
+    &\log{\frac{1-y}{y}} = t+c &\mbox{ (As y $<$ 1)}
+\end{align*}
+On substituting the initial conditions given, we find that c = 0 and y = $\frac{1}{e^t + 1}$.\\
+Therefore, the true value of y(1) is just $\frac{1}{1+e}$.\\
+\textbf{The procedure:}\\
+The various schemes were derived using $f(y,t) = -y(1-y)$.\\
+For the sake of computing y(1), a time step dt of 0.01 was used for all the schemes.\\
+The schemes are described below,\\
+\textbf{Euler Explicit:}\\
+\begin{align}
+    y_e[i+1] = y_e[i] + dt\cdot(y_e[i]-1)\cdot(y_e[i])
+\end{align}
+\textbf{Euler Implicit:}\\
+Here, we have
+\begin{align*}
+    y_i[i+1] &= y_i[i] + dt\cdot(y_e[i+1]-1)\cdot(y_e[i+1])
+\end{align*}
+On solving this quadratic for $y_i[i+1]$, we take the smaller root as $y_i[i+1] \approx y_i[i]$ for small dt.\\
+Thus, we have,
+\begin{align}
+   y_i[i+1] &=  \frac{(1+dt) -\sqrt{((1+dt)^2 - 4(y_i[i])dt))}}{(2dt)}
+\end{align}
+Treading in a similar fashion, we have\\
+\textbf{Trapezoidal Rule:}\\
+\begin{align}
+  y_t[i+1] =   \frac{(1+(\frac{dt}{2})) - \sqrt{((1+(\frac{dt}{2}))^2 - 4(\frac{dt}{2})((\frac{dt}{2})y_t[i]^2 + (1-(\frac{dt}{2}))y_t[i])))}}{dt}
+\end{align}
+\textbf{RK-2}\\
+Here we consider the variant with $\alpha = 0.5$
+\begin{align}
+    &k_1 = dt(y_{rk2}[i]-1)(y_{rk2}[i]) &\mbox{(first intermediate point)}\\
+    &k_2 = dt(y_{rk2}[i]-1 + 0.5k_1)(y_{rk2}[i]+0.5k_1) &\mbox{(second intermediate point)}\\
+    &y_{rk2}[i+1] = y_{rk2}[i] + k_2     
+\end{align}
+\textbf{RK-4}\\
+\begin{align}
+    &k_1 = dt(y_{rk4}[i]-1)(y_{rk4}[i]) &\mbox{(first intermediate point)}\\
+    &k_2 = dt(y_{rk4}[i]-1 + 0.5k_1)(y_{rk4}[i]+0.5k_1) &\mbox{(second intermediate point)}\\
+    &k_3 = dt(y_{rk4}[i]-1 + 0.5k_2)(y_{rk4}[i]+0.5k_2) &\mbox{(third intermediate point)}\\
+    &k_4 = dt(y_{rk4}[i]-1 + k_3)(y_{rk4}[i]+k_3) &\mbox{(fourth intermediate point)}\\
+    &y_rk4[i+1] = y_{rk4}[i] + \frac{1}{6}k_1 + \frac{1}{3}\cdot(k_2+k_3)+\frac{1}{6}k_4
+\end{align}
+\textbf{Stability:}\\
+The implicit schemes (Euler implicit and Trapezoidal Rule) are unconditionally stable whereas the explicit methods are conditionally stable.\\
+We see that for the task of computing y(1), all the schemes are stable.\\
+However, for finding the stability of the schemes, we try experimenting with $y^{'} = \lambda y$. Finding the stability for Euler explicit, we see that it gets unstable as dt exceeds 3 and for the RK methods its extremely non trivial to find the stability.However issues arise at about dt = 4.\\
+\textbf{Plots}\\
+\begin{figure}[H]  
+     \centering
+     %\begin{subfigure}[b]{0.3\textwidth}
+         %\centering
+    \includegraphics[width=8cm]{1.png}
+     \label{fig:Dendrogram for the problem 3(c)}
+     %\end{subfigure}
+     \caption{Actual plot of the function using the various schemes}
+\end{figure}
+\begin{figure}[H]  
+     \centering
+     %\begin{subfigure}[b]{0.3\textwidth}
+         %\centering
+    \includegraphics[width=15cm]{2.png}
+     \label{fig:Dendrogram for the problem 3(c)}
+     %\end{subfigure}
+     \caption{Plot of the error}
+\end{figure}
+\textbf{Function values at y(1)}
+\begin{verbatim}
+Actual value y(1) : 0.268941421369995
+Euler explicit estimate y(1) : 0.2687054165811632
+Euler implicit estimate y(1) : 0.26917773195118677
+Trapezoidal Rule estimate y(1) : 0.2689420543813492
+Second Order Runge Kutta estimate y(1) : 0.2689412904060045
+Fourth Order Runge Kutta estimate y(1) : 0.26894142137184596
+\end{verbatim}
+\textbf{Observations}
+\begin{itemize}
+    \item We see that the order of accuracy of the schemes are RK4 $>$ RK2 $>$ Trapezoidal Rule $>$ Euler explicit and implicit.
+    \item From the plot of the errors we see that the local accuracy of the schemes agree with what we'd expect theoretically.
+    \item For this particular time step we see that all the plots for y(t) overlap which talks about how good all the schemes are.
+\end{itemize}
+\textbf{Global Accuracy}\\
+The overall global accuracy of the schemes are given below:
+\begin{itemize}
+    \item Euler explicit and implicit :$\mathcal{O}(dt)$.
+    \item Trapezoidal Rule : $\mathcal{O}((dt)^2)$.
+    \item RK2 : $\mathcal{O}((dt)^2)$.
+    \item RK4 : $\mathcal{O}((dt)^4)$.
+\end{itemize}
+\end{solution}
+\question{\sc[Shooting method]}\\
+Write a code that guarantees global fourth order accuracy to solve
+\begin{align*}
+    y^{"} + 4y^{'} +3y = \sin{t^2}
+\end{align*}
+with y(0) = 0 and y(1) = 1 using the shooting method.
+\begin{solution}
+\\
+We break the given second order ODE into two first order ones before employing the shooting method. We use an RK4 based approach for the shooting method as we require an overall $4^{th}$ order global accuracy.\\
+The coupled system of differential equations representing the ODE is given below
+\begin{align}
+    &u^{'} = v\\
+    &v^{'} = \sin{(t^2)} -3u -4v
+\end{align}
+where u = y and v = $y^{'}$.\\
+The shooting method tries approximating the initial value of v iteratively by making different guesses.\\
+The solution obtained by the shooting method is shown below.\\
+The exact solution was extremely non-trivial to obtain and hence can't be plotted accurately.\\
+\textbf{Plots}
+\begin{figure}[H]  
+     \centering
+     %\begin{subfigure}[b]{0.3\textwidth}
+         %\centering
+    \includegraphics[width=8cm]{3.png}
+     \label{fig:Dendrogram for the problem 3(c)}
+     %\end{subfigure}
+     \caption{y(t)}
+\end{figure}
+\begin{figure}[H]  
+     \centering
+     %\begin{subfigure}[b]{0.3\textwidth}
+         %\centering
+    \includegraphics[width=8cm]{4.png}
+     \label{fig:Dendrogram for the problem 3(c)}
+     %\end{subfigure}
+     \caption{$y^{'}$(t)}
+\end{figure}
+\end{solution}
+\end{questions}
+\end{document}

@@ -1,0 +1,674 @@
+\documentclass[letterpaper]{exam}
+\printanswers
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage[utf8x]{inputenc}
+\usepackage[table]{xcolor}
+\usepackage{listings}
+\usepackage{mdframed}
+\usepackage{lmodern}
+\usepackage{relsize}
+\usepackage[left=0.25in, right=0.25in, top=0.75in, bottom=0.75in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{subfigure}
+\usepackage{enumerate}
+\usepackage{tcolorbox}
+\pagestyle{headandfoot}
+
+\usepackage{cancel}
+\usepackage{placeins}
+\usepackage{multirow}
+\usepackage{algorithm2e}
+\pagecolor{black}
+\color{white}
+\hypersetup{%
+  colorlinks=true,% hyperlinks will be black
+  linkbordercolor=red,% hyperlink borders will be red
+  pdfborderstyle={/S/U/W 1}% border style will be underline of width 1pt
+}
+
+\newcommand{\soln}{\\ \textbf{Solution}: }
+\newcommand{\bkt}[1]{\left(#1\right)}
+\lhead{MA5892: Numerical Methods and Scientific Computing}
+
+\chead{Assignment: 2}
+
+\rhead{Rollnumber: EE18B067}
+
+\begin{document}
+\hrule
+\vspace{3mm}
+\noindent 
+\vspace{3mm}
+\noindent{{\sf Roll No:} EE18B067 \hfill  {\sf Name:Abhishek Sekar}}% put your ROLL NO AND NAME HERE
+
+\noindent
+{{\sf Date: \today }} %Date
+
+
+
+\vspace{3mm}
+\hrule
+\begin{questions}
+\question {\sc [Vandermonde Matrix]}\\Consider the Vandermonde matrix V, i.e.,
+\begin{center}
+$V = \begin{bmatrix}
+1&x_{0}&x_{0}^{2}&\ldots&x_{0}^{n}\\
+1&x_{1}&x_{1}^{2}&\ldots&x_{1}^{n}\\
+1&x_{2}&x_{2}^{2}&\ldots&x_{2}^{n}\\
+\vdots&\vdots&\ddots&\ldots&\vdots\\
+1&x_{n}&x_{n}^{2}&\ldots&x_{n}^{n}
+\end{bmatrix}$
+\end{center}
+\begin{parts}
+\part Show that det(V) is a polynomial in the variables $x_{0},x_{1},\ldots,x_{n}$ with degree $\frac{n(n+1)}{2}$.\label{1}
+\begin{solution}
+\\
+\textbf{Computing determinants using the \textit{Leibniz Formula}:}\\
+The Leibniz Formula for computing the determinant for an n dimensional square matrix A, is written as follows:
+\begin{align}
+    det(A) = \underset{\tau \in S_n}{\mathlarger{\sum}} \text{sgn}(\tau) \overset{n}{\underset{i=1}{\mathlarger{\Pi}}} a_{i,\tau(i)}
+\end{align}
+Where, $S_n$ refers to the set of all possible permutations of the sequence $\{1,2,\ldots,n\}$.The $i^{th}$ element of this sequence refers to the column index of the element from the $i^{th}$ row we're considering in the product. Sgn$(\tau)$ follows the below property.We find the number of swaps it'll take to obtain the first sequence (w.r.t a lexicographic ordering) from the ordering we're looking at.
+\begin{align*}
+    \text{sgn}(\tau) &= \begin{cases}
+                            1 &\mbox{ (if number of swaps is an even number)}\\
+                            -1 &\mbox{ (if it is odd)}
+                        \end{cases}
+\end{align*}
+\textbf{Demonstrating how the Leibniz Formula works for n=3:}\\
+\begin{align*}
+    A = \begin{bmatrix}
+    a&b&c\\
+    d&e&f\\
+    g&h&i
+    \end{bmatrix}
+\end{align*}
+We know that det(A) = aei - afh +bfg -bdi + cdh -ceg.\\
+Writing each term of the determinant in a tabulated fashion,we have,\\
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+Term&Column&Sign&Swaps\\
+\hline 
+aei&123&+&0\\
+\hline 
+afh&132&-&1\\
+\hline 
+bfg&213&+&2\\
+\hline 
+bdi&231&-&1\\
+\hline 
+cdh&312&+&2\\
+\hline 
+ceg&321&-&1\\
+\hline
+\end{tabular}
+
+\end{center}
+The table is filled as follows:\\
+For the term afh, the corresponding sequence is 1,3,2 as we're taking 'a' ,the \textit{first} element from the first row, 'f', the \textit{third} element from the second row (f) and 'h', the \textit{second} element from the third row to form this term.The number of swaps to obtain 1,2,3 from 1,3,2 is 1 (i.e. , swap 2 and 3).Therefore, this term is negative.Likewise we can reason for the other terms.\\
+\textbf{Applying Leibniz Formula in this context:}\\
+The Leibniz formula provides us with a method that elegantly computes the determinant by including all possibilities of terms containing an element from each column.\\
+As we observe the Vandermonde matrix, we see that, the $i^{th}$ column has terms involving $\{x_0,x_1,\ldots,x_n\}$ to the power of i (indexing the columns from 0). Each term in the summation of the Leibniz formula will have one representative element per column(per row too). Therefore, the total power of this term can be computed as,
+\begin{align*}
+    0+1+2+ \ldots + n = \frac{n(n+1)}{2}
+\end{align*}
+as the representative element from the $i^{th}$ column is of degree i from the variables $\{x_0,x_1,\ldots,x_n\}$. As the determinant is a sum of polynomials of degree $\frac{n(n+1)}{2}$, it too is of the same degree.\\
+Therefore, it can be seen that det(V) is a polynomial of the variables $\{x_0,x_1,\ldots,x_n\}$ with degree $\frac{n(n+1)}{2}$.
+\end{solution}
+\part Show that if $x_{i} = x_{j}$ for $i \neq j$, then det(V) = 0.
+\begin{solution}
+\\
+If $x_{i} = x_{j}$ for i$\neq$j, then the $i^{th}$ row and the $j^{th}$ row of the Vandermonde matrix will be identical.\\
+This means that the rank of the Vandermonde matrix isn't full rank as there is a row dependant on another. From, the fundamental theorem of linear algebra, i.e.,
+\begin{align}
+    n = dim(v) = rank(V) + nullity(V)
+\end{align}
+there exists a non trivial null space signifying the presence of the \textit{zero} eigenvalue. Since the determinant is the product of the eigenvalues, det(V) = 0.
+\end{solution}
+\part Conclude that $(x_{i}-x_{j})$ is a factor of det(V)
+\begin{solution}
+\\
+\textbf{The factor theorem:}\\
+The factor theorem states that, for a polynomial f(x), (x-k) is a factor $\leftrightarrow$ k is a root of f(x) (i.e., f(k) = 0).\\
+\textbf{Applying it here:}\\
+As we saw in the previous subdivision, having $x_i = x_j$ made det(V) 0.\\
+Now, considering det(V) as a polynomial in $x_{i}$, i.e., det(V) = f($x_i$), we see that this function vanishes at $x_i = x_j$ or f($x_j$) = 0.\\
+Therefore, using the factor theorem here, we see that,$x_i - x_j$ is a factor of f($x_i$) and thereby the determinant. \\
+Hence, $x_{i} - x_{j}$ is a factor of det(V).
+\end{solution}
+\part Conclude that det(V) = C $\left(\underset{{0 \leq j < i \leq n}}{\mathlarger{\mathlarger{\mathlarger{\Pi}}}} (x_{i} - x_{j})\right)$, where C is a constant.
+\begin{solution}
+\\
+\textbf{Factors of det(V):}\\
+We saw in the previous subdivision that $x_{i} - x_{j}$ is a factor of det(V) for arbitrary i and j $\in [0,1,\ldots,n]$. Repeatedly employing the factor theorem by choosing two variables out of $\{x_0,x_1,\ldots,x_n\}$ at a time, we see that $x_{i} - x_{j}$ is a factor of det(V) for i and j $\in [0,1,\ldots,n]$ with i$\neq$j.The product of all these terms will still result in a factor of det(V). Ordering all the above terms in a fashion where i>j, the product can be written as $\underset{{0 \leq j < i \leq n}}{\mathlarger{\mathlarger{\mathlarger{\Pi}}}} (x_{i} - x_{j})$ in an elegant manner.\\
+\textbf{There is no other factor to det(V):}\\
+To conclude that det(V) = C $\left(\underset{{0 \leq j < i \leq n}}{\mathlarger{\mathlarger{\mathlarger{\Pi}}}} (x_{i} - x_{j})\right)$, we need to establish that  $\underset{{0 \leq j < i \leq n}}{\mathlarger{\mathlarger{\mathlarger{\Pi}}}} (x_{i} - x_{j})$ captures all its factors. We see that the product contains all the possible terms of the form $x_{i} - x_{j}$.Approaching this task from a combinatorial perspective, we see that the total number of terms present in the product is ${}^{n+1}C_{2}$, as we 
+are choosing 2 variables $x_i$ and $x_j$ from a pool of n+1 variables to create the term $x_{i} - x_{j}$.\\
+We saw in \ref{1} that the degree of det(V) is $\frac{n(n+1)}{2}$.Observing that ${}^{n+1}C_{2} = \frac{n(n+1)}{2}$, we see that the product $\underset{{0 \leq j < i \leq n}}{\mathlarger{\mathlarger{\mathlarger{\Pi}}}} (x_{i} - x_{j})$ is already a degree $\frac{n(n+1)}{2}$ polynomial in the given variables.
+If det(V) had an additional factor besides the product term, the degree of det(V) will have to higher than that of the product term which leads to a contradiction.
+Therefore, we see that there is no other factor for det(V) other than those captured by the product term and hence, we can write det(V) as C $\left(\underset{{0 \leq j < i \leq n}}{\mathlarger{\mathlarger{\mathlarger{\Pi}}}} (x_{i} - x_{j})\right)$.
+\end{solution}
+\part Compare the coefficient of $x_{1}x_{2}^2x_{3}^3\ldots x_{n}^{n}$ to obtain the value of C.
+\begin{solution}
+\\
+From the previous subdivision, we saw that
+det(V) = C $\left(\underset{{0 \leq j < i \leq n}}{\mathlarger{\mathlarger{\mathlarger{\Pi}}}} (x_{i} - x_{j})\right)$.Now, listing the elements of the product term in a decreasing fashion of i,
+
+        \textbf{i = n}: ($x_n$ - $x_{n-1}$),($x_n$ - $x_{n-2}$),\ldots \ldots \ldots \ldots \ldots \ldots,($x_n$ - $x_{1}$),($x_n$ - $x_{0}$)\\
+         \textbf{i = n-1}: ($x_{n-1}$ - $x_{n-2}$),($x_{n-1}$ - $x_{n-3}$),\ldots,($x_{n-1}$ - $x_{1}$), ($x_{n-1}$ - $x_{0}$)\\
+         $\vdots$ \\
+         $\vdots$ \\
+         \textbf{i = 1}: ($x_{1}$ - $x_{0}$)\\
+
+From this, we see that there are k terms with i = k in accordance with the way j is defined (j runs from 0 to i).Using this, we can realize $x_{1}x_{2}^2x_{3}^3\ldots x_{n}^{n}$ from $\underset{{0 \leq j < i \leq n}}{\mathlarger{\mathlarger{\mathlarger{\Pi}}}} (x_{i} - x_{j})$ by including  $x_i$ from 
+all the $(x_{i} - x_{j})$ terms. Therefore the coefficient of this term in the expression for det(V) is just C.\\
+If we try computing the coefficient of the same term in a different manner employing the Leibniz Formula, we see that the term can be obtained by including the $i^{th}$ column element from the $i^{th}$ row of the Vandermonde matrix.Therefore, the resultant column sequence will be $\{i: i \in \mathbb{W},i \leq n\}$.
+The coefficient of this ordering will be +1 as it requires 0 swaps to reach the sequence $\{0,1,2,\ldots,n\}$.\\
+Comparing this with the coefficient we got earlier from the expression for det(V), we get C = 1.
+\end{solution}
+\end{parts}
+\question {\sc[Monic Legendre Polynomials]}\\
+Monic Legendre polynomials on [-1,1] are defined as follows:\\
+\begin{align}
+    q_{0}(x) &= 1 \\
+    q_{1}(x) &= x
+\end{align}
+and $q_{n}(x)$ is a monic polynomial of degree n such that $\int_{-1}^{1} q_{n}(x)q_{m}(x)dx = 0$ for all $m \neq n$.
+\begin{parts}
+\part Show that these orthogonal polynomials satisfy\\
+\begin{align*}
+    q_{n+1}(x) = xq_{n}(x) - \left(\frac{n^2}{4n^2-1}\right)q_{n-1}(x)
+\end{align*}
+\begin{solution}
+\\
+\textbf{Proving that legendre polynomials are either odd or even functions}\\
+We have $q_0(x) = 1$ as an even function.\\
+Likewise $q_1(x) = x$ is an odd function.\\
+Let us hypothesize that $q_{n}(x)$ is an even function for even n and an odd function for odd n and prove it using induction.
+\begin{itemize}
+    \item The trivial case for n=0,n=1 is shown above and it seems to follow the hypothesis.
+    \item Let us assume that the hypothesis is valid for $q_k(x)$ for some k $\in \mathbb{N}$, i.e., $q_k(x)$ is an odd function for odd k and even for even k.
+    \item Let us explore the properties of $q_{k+1}(x)$.\\
+    Using the standard basis for polynomials of the order k+1, we have,
+    \begin{align*}
+        &q_{k+1}(x) = \sum_{i=0}^{k+1} \lambda_{i}x^{i}\\
+        &q_{k}(x)   = \sum_{i=0}^{k} \beta_{i}x^{i}\\
+        &\text{Where}\\
+        &\beta_{i} = 0 \mbox{ for odd i} & \mbox{ (k even)}\\
+        &\beta_{i} = 0 \mbox{ for even i} & \mbox{ (k odd)}\\
+    \end{align*}
+    as an odd polynomial in x can consist only of the odd powers of the x and an even polynomial in x can comprise of only the even powers.
+    \\
+    Implementing the orthogonality constraint between $q_{k+1}(x)$ and $q_{k}(x)$, we have, 
+    \begin{align*}
+       0 &= \int_{-1}^{1} q_{k+1}(x)q_{k}(x)dx \\
+       &\Rightarrow 
+       \int_{-1}^{1} \left(\sum_{i=0}^{k+1} \lambda_{i}x^{i}\right)\left(\sum_{j=0}^{k} \beta_{j}x^{j}\right)\\
+       &\Rightarrow
+        \int_{-1}^{1} \sum_{i=0}^{2k+1}x^i\left(\sum_{j=0}^{i} \lambda_{j}\beta_{(i-j)}\right)
+    \end{align*}
+    Where, $\sum_{j=0}^{i} \lambda_{j}\beta_{(i-j)}$ is a convolution operation between the coefficients which describes the coefficient of the $x^i$ term in the product $q_{k+1}(x)q_{k}(x)$. $\lambda_{j}x^j$ is the contribution of $q_{k+1}(x)$ and $\beta_{(i-j)}x^{i-j}$ is the contribution of $q_{k}(x)$ to the $x^i$ term in the product.\\
+    Continuing with the orthogonality constraint,exploiting the linearity of integration, we see that, for even i, the coefficient $\sum_{j=0}^{i} \lambda_{j}\beta_{(i-j)}$ has to be equal to 0 in order to satisfy the orthogonality constraints (as for odd i, $x^i$ is an odd function which drives the integral to 0). This gives us k+1 equations (as there are k+1 even numbers below 2k+1) which are all supposed to yield 0. This would only happen if for all even i, $\lambda_{j}\beta_{(i-j)}$ is 0.For even j we have i-j even and likewise for odd j.\\
+    Therefore the product of coefficients of even powers and odd powers of $q_{k+1}(x),q_{k}(x)$ taken in a pairwise fashion have to be 0. Depending on whether k is even or odd, we have the appropriate coefficients of $q_{k}(x)$ vanish. This means, that for the cases where $q_{k}(x)$ don't vanish, those of $q_{k+1}(x)$ vanish. Besides, it can be shown that the other coefficients of $q_{k+1}(x)$ necessarily have to be non-zero by implementing orthogonality by lower order monic legendre polynomials. Therefore, from this we see that, if $q_{k}(x)$ is odd or even, then we have $q_{k+1}(x)$ is even or odd respectively.\\
+    Therefore, by the Principle of Mathematical Induction, our hypothesis is indeed correct. 
+\end{itemize}
+\textbf{Showing that $q_{n+1}(x) = xq_{n}(x) + \alpha q_{n-1}(x)$}:\\
+As the monic legendre polynomials are orthogonal, we can use the legendre polynomials $\{q_0(x),q_1(x),\ldots,q_n(x)\}$ as basis functions to generate any polynomial p(x), where p(x) $\in P_n$,the vector space comprising all polynomials with degree n. Therefore,
+\begin{align}\label{3}
+p(x) = \sum_{i=0}^{n} \alpha_{i}q_i(x) = \begin{bmatrix}
+\alpha_{0}& \alpha_{1}&\ldots&\alpha_{n} 
+\end{bmatrix} \begin{bmatrix}
+q_0(x)\\
+q_1(x)\\
+\vdots \\
+q_n(x)
+\end{bmatrix} = \overrightarrow{\alpha}^{T}\overrightarrow{q}
+\end{align}
+As $q_{n+1}(x)$ is a monic polynomial, it can be written as $q_{n+1}(x) = x^{n+1} + p(x)$ where $p(x)$ is a polynomial of degree n. Likewise, $q_n(x)$ is also a monic polynomial, therefore, we can express $q_{n+1}(x)$ in terms of $q_n(x)$ as $q_{n+1}(x) = xq_{n}(x) + p_n(x)$ where $p_n(x)$ is another polynomial of degree n. $xq_{n}(x)$ is also a monic polynomial but with degree n+1, hence the above representation for $q_{n+1}(x)$ is valid.\\
+Using \ref{3}, we can write $p_n(x)$ as a linear combination of the monic legendre polynomials of upto degree n.Therefore,
+\begin{align}\label{4}
+    q_{n+1}(x) = xq_n(x) + \sum_{i=0}^{n} \alpha_{i}q_i(x)
+\end{align}
+Let us try evaluating the coefficients by making use of the orthogonality constraints corresponding to  $q_{n+1}(x)$. We know that,
+\begin{itemize}
+    \item \textbf{Orthogonality between $q_{n+1}(x)$ and $q_{n}(x)$}\\
+    \begin{align*}
+        0 &= \int_{-1}^{1} q_{n+1}(x)q_{n}(x)dx\\
+        &\Rightarrow
+        \int_{-1}^{1} \left( xq_n(x) + \sum_{i=0}^{n} \alpha_{i}q_i(x)\right) q_{n}(x)dx &\mbox{ (from \ref{4})}\\
+        &\Rightarrow 
+        \int_{-1}^{1} x(q_n(x))^2dx + \int_{-1}^{1} \alpha_{n}(q_n(x))^2dx + \int_{-1}^{1} \left(\sum_{i=0}^{n-1} \alpha_{i}q_i(x)\right)q_{n}(x)dx
+    \end{align*}
+    From this,using the fact that the square of an odd or even function is even, we see that,
+    \begin{align*}
+        & \int_{-1}^{1} x(q_n(x))^2dx  = 0 &\mbox{ (As $(q_n(x))^2$ is even)}\\
+        & \alpha_{n}\int_{-1}^{1} (q_n(x))^2dx  = 0\\
+        & \Rightarrow
+        \alpha_{n} = 0 &\mbox{ (As $\int_{-1}^{1} (q_n(x))^2dx$ non-zero)}\\
+        & \int_{-1}^{1} \left(\sum_{i=0}^{n-1} \alpha_{i}q_i(x)\right)q_{n}(x)dx = 0 & \mbox{(Orthogonality property)}
+    \end{align*}
+    Our takeaway from this is that, $\alpha_{n}$ is 0.
+    \item \textbf{Orthogonality between $q_{n+1}(x)$ and $q_{n-1}(x)$}\\
+    \begin{align*}
+        0 &= \int_{-1}^{1} q_{n+1}(x)q_{n-1}(x)dx\\
+        &\Rightarrow 
+        \int_{-1}^{1} xq_{n}(x)q_{n-1}(x)dx + \int_{-1}^{1} \alpha_{n-1}\left(q_{n-1}(x)\right)^{2}dx + \int_{-1}^{1} \left(\sum_{i=0}^{n-2} \alpha_{i}q_i(x)\right)q_{n-1}(x)dx
+    \end{align*}
+    From this, using the fact that the product of odd and even functions is odd, we have,
+    \begin{align*}
+      &\int_{-1}^{1} xq_{n}(x)q_{n-1}(x)dx + \int_{-1}^{1} \alpha_{n-1}\left(q_{n-1}(x)\right)^{2}dx  = 0\\
+      &\Rightarrow 
+      \alpha_{n-1} = \frac{- \int_{-1}^{1} xq_{n}(x)q_{n-1}(x)dx}{\int_{-1}^{1} \left(q_{n-1}(x)\right)^{2}dx} \neq 0 &\mbox{ (As $xq_{n}(x)q_{n-1}(x)$ is even)}\\
+      & \int_{-1}^{1} \left(\sum_{i=0}^{n-2} \alpha_{i}q_i(x)\right)q_{n-1}(x)dx = 0 &\mbox{(Orthogonality property)}
+    \end{align*}
+    \item \textbf{Orthogonality between $q_{n+1}(x)$ and $q_{k}(x), k < n-2$}\\
+    Employing the orthogonality property between the derived expression for  $q_{n+1}(x)$ and $q_{k}(x)$ for all $k < n-2$, we see that the only term that isn't orthogonal to $q_{k}(x)$ from $q_{n+1}(x)$ is $\alpha_{k}q_{k}(x)$ and therefore, to satisfy the orthogonality property, $\alpha_{k}$ = 0 for all $k < n-2$.
+\end{itemize}
+Hence, as $\alpha_{k} = 0$ for $k \neq n-2$, we can rewrite \ref{4} as
+\begin{align}\label{5}
+    q_{n+1}(x) = xq_{n}(x) - \alpha q_{n-1}(x)
+\end{align}
+\textbf{Alternate type of legendre polynomials}:\\
+Consider the polynomial $ Q_n(x) = \frac{1}{2^n n!}\frac{d^n }{dx^n}\left(x^2-1\right)^n$ generated by the \textit{Rodrigues Formula}. It can be seen that these polynomials also satisfy the orthogonality property satisfied by the monic legendre polynomials. A short proof is shown below.
+For two functions f(x) and g(x) which are differentiable n times on [-1,1] with g(x) and its first n-1 derivatives vanishing at the endpoints, we have,
+\begin{align}\label{5}
+\int_{-1}^{1} f(x)g^{(n)}(x) dx = (-1)^n \int_{-1}^{1} f^{(n)}(x)g(x)dx
+\end{align}
+where, $g^{(n)}(x)$ represents the $n^{th}$ derivative of g(x) w.r.t x . This can be shown by repeatedly implementing integration by parts n times.\\
+Using this identity below,
+\begin{align*}
+    & \int_{-1}^{1} Q_{n}(x)Q_{k}(x) & \mbox{ (k $<$ n) }\\
+    & \Rightarrow
+    \int_{-1}^{1} Q_{k}(x)\left(\frac{1}{2^n n!}\frac{d^n }{dx^n}\left(x^2-1\right)^n\right)\\
+    & \Rightarrow 
+    (-1)^n \int_{-1}^{1}\left(\frac{1}{2^n n!}\left(x^2-1\right)^n\right)\frac{d^n }{dx^n}\left(Q_{k}(x)\right)dx
+\end{align*}
+  But we have, ${dx^n}\left(Q_{k}(x)\right)dx = 0$ for k $<$ n. Therefore, the orthogonality property is satisfied.\\
+  Therefore, we can say that $q_n(x)$ is a scaled version of $Q_n(x)$,i.e. ,$k q_n(x) =  Q_n(x)$.
+  Using binomial theorem followed by successive differentiation of $(x^2-1)^n$.
+  We obtain, 
+  \begin{align*}
+      Q_{n}(x) = \frac{1}{2^n n!} \left(\frac{(2n)!}{n!}x^n - \frac{n(2n-2)!}{(n-2)!}x^{n-2} \ldots \ldots \right)
+  \end{align*}
+  From this, we can see that k is $\frac{1}{2^n}{}^{2n}C_{n}$.\\
+  \begin{align*}
+      q_{n+1}(x) &= \frac{1}{k}Q_{n+1}(x)\\
+      &\Rightarrow 
+      \frac{2^(n+1)}{{}^{2n+2}C_{n+1}}\left(\frac{1}{2^{n+1} (n+1)!} \left(\frac{(2n+2)!}{(n+1)!}x^{n+1} - \frac{(n+1)(2n)!}{(n-1)!}x^{n-1} \ldots \ldots \right) \right)
+  \end{align*}
+  Using this and comparing the $(n-1)^{th}$ power of x in the expression of $Q_{n+1}(x)$ and \ref{5}, we have,
+  \begin{align}
+      & -\alpha +\left(\frac{2^(n)}{{}^{2n}C_{n}}\right)\left(\frac{1}{2^{n} (n)!}\right) \left(\frac{(n)(2n-2)!}{(n-2)!}\right)  =\left(\frac{2^(n+1)}{{}^{2n+2}C_{n+1}}\right)\left(\frac{1}{2^{n+1} (n+1)!}\right) \left(\frac{(n+1)(2n)!}{(n-1)!}\right)\\
+      &\alpha = \frac{n(n+1)}{2(2n+1)} - \frac{n(n-1)}{2(2n-1)}\\
+      &\alpha = \frac{n^2}{4n^2 - 1}
+  \end{align}
+  Therefore, we can see that the recursion for monic legendre polynomials is,
+  \begin{align}
+    q_{n+1}(x) = xq_{n}(x) - \left(\frac{n^2}{4n^2-1}\right)q_{n-1}(x)  
+  \end{align}
+\end{solution}
+\part Prove that if p(x) is a monic polynomial of degree n minimizing $\parallel p(x) \parallel_{2}$ ,then p(x) = $q_n(x)$.
+\begin{solution}
+\\
+As we saw in the previous subdivision, the monic legendre polynomials upto degree n form the basis for any polynomial of degree n.\\
+From \ref{3},we have,
+\begin{align*}
+    & p(x) = \sum_{i=0}^{n-1} \alpha_{i}q_i(x) + q_n(x) &\mbox{ (As p(x) is monic)}
+\end{align*}
+Therefore, the norm of p(x) can be written in terms of legendre polynomials by invoking the orthogonality property.\\
+\begin{align*}
+    \left(\parallel p(x) \parallel_{2}\right)^{2} &= \int_{-1}^{1}\left(p(x)\right)^2dx\\
+    &\Rightarrow
+    \int_{-1}^{1}\left(\sum_{i=0}^{n-1} \alpha_{i}q_i(x) + q_n(x) \right)^2dx\\
+    &\Rightarrow 
+    \int_{-1}^{1}
+    \left(q_n(x)\right)^2dx +\sum_{i=0}^{n-1}\alpha_{i}\left(\int_{-1}^{1}
+    \left(q_i(x)\right)^2dx\right) &\mbox{ (Orthogonality property)}\\
+    &\Rightarrow 
+     \left(\parallel q_n(x) \parallel_{2}\right)^{2} + \sum_{i=0}^{n-1}\alpha_{i}\left(\parallel q_i(x) \parallel_{2}\right)^2
+\end{align*}
+As $\parallel q_i(x) \parallel_{2}$ is positive, $\parallel p(x) \parallel_{2} \geq \parallel q_n(x) \parallel_{2}$ where equality is attained when all $\alpha_i$ = 0 for i $\in [0,1,2,\ldots,n-1]$.\\
+Therefore, the monic polynomial of degree n minimizing  $\parallel p(x) \parallel_{2}$ is $q_n(x)$.
+\end{solution}
+\part Conclude that the Legendre nodes (i.e., the roots of the Legendre polynomial) minimize $\int_{-1}^{1} \left(\overset{n}{\underset{k=0}{\mathlarger{\mathlarger{\mathlarger{\Pi}}}}} (x-x_{k})\right)^{2}dx$
+\begin{solution}
+\\
+Let p(x) be written employing the factor theorem as, $\overset{n}{\underset{k=0}{\mathlarger{\mathlarger{\mathlarger{\Pi}}}}} (x-x_{k})$ where $x_{k}$ are its roots. We can observe that p(x) is monic from the way we've defined it.\\
+Then the integral becomes, $\int_{-1}^{1} \left(p(x)\right)^2$ which is nothing but the square of the two norm of p(x).\\
+Therefore, this problem reduces to the problem in the previous subdivision, where we saw that $q_{n}(x)$ was the minimizer of the two norm of monic polynomials of degree n.Therefore, by factor theorem, the roots $x_{k}$ are the roots of the legendre polynomial of degree n and these indeed minimize $\int_{-1}^{1} \left(\overset{n}{\underset{k=0}{\mathlarger{\mathlarger{\mathlarger{\Pi}}}}} (x-x_{k})\right)^{2}dx$.
+\end{solution}
+\end{parts}
+\question {\sc[Chebyshev Polynomials]}\\
+The Chebyshev polynomials of the first kind are defined as \\
+\begin{align*}
+    T_{n}(x) = cos(n\mbox{ }\text{arccos}(x))
+\end{align*}
+\begin{parts}
+\part Show that the Chebyshev polynomials satisfy the orthogonality condition\\
+\begin{align*}
+    \int_{-1}^{1} \frac{T_{n}(x)T_{m}(x)}{\sqrt{1-x^2}}dx = 0
+\end{align*}
+\begin{solution}
+\\
+Substituting x = cos($\theta$) in the above integral does the following,
+\begin{itemize}
+    \item dx = -sin($\theta$)d$\theta$
+    \item as x varies from -1 to 1, theta will vary from 0 to $\pi$
+    \item $T_{n}$(x) becomes $cos(n\theta)$.
+\end{itemize}
+Therefore, the integral now becomes, -$\int_{0}^{\pi} cos(n\theta)cos(m\theta) d\theta$.\\ Therefore, we've to prove that the above integral vanishes when m$\neq$n.From trigonometry, we have,
+\begin{align*}
+   cos(n\theta)cos(m\theta) = \frac{1}{2} \left(cos((m+n)\theta) + cos((m-n)\theta)\right)
+\end{align*}
+Using this in the integral for m$\neq$n, we get,
+\begin{align*}
+    &-\int_{0}^{\pi} \frac{1}{2} \left(cos((m+n)\theta) + cos((m-n)\theta)\right) d\theta\\
+    &\Rightarrow
+    \frac{-1}{2} \left(\int_{0}^{\pi} cos((m+n)\theta)+ cos((m-n)\theta) \right)d\theta\\
+    &\Rightarrow
+    \frac{1}{2} \left(\left[\frac{sin((m+n)\theta)}{m+n}\right]_{0}^{\pi} +  \left[\frac{sin((m-n)\theta)}{m-n}\right]_{0}^{\pi}\right) &\mbox{ (As $\int cos(n\theta)dx = \frac{sin(n\theta)}{n} + C$ , m$\neq$n)}
+\end{align*}
+As m+n and m-n are integers, the above expression evaluates to 0 as $sin(k\pi) = 0$ for integral k.\\
+Therefore, we can see that the Chebyshev polynomials satisfy the given orthogonality condition.
+\end{solution}
+\part Show that the Chebyshev polynomials of the first kind satisfy the recurrence:\\
+\begin{align*}
+    T_{n+1} = 2xT_{n} - T_{n-1}
+\end{align*}
+with $T_{0}(x) = 1$ and $T_{1}(x) = x$.
+\begin{solution}
+\\
+If we substitute x for $cos(\theta)$ like we did in the previous subdivision, we get, $T_{n}(x)$ = $cos((n)\theta)$ for n $\in \mathbb{W}$. Therefore,
+\begin{align*}
+    &T_{n+1}(x) + T_{n-1}(x) = cos((n+1)\theta) + cos((n-1)\theta) &\mbox{(n $\geq$ 1)}
+\end{align*}
+Employing the trigonometry identity we saw,
+\begin{align*}
+ cos((n+1)\theta) + cos((n-1)\theta) &= 2cos(\frac{((n+1)+(n-1))}{2}\theta)cos(\frac{((n+1)-(n-1))}{2}\theta)\\
+ &\Rightarrow
+ 2cos(n\theta)cos(\theta)
+\end{align*}
+Substituting x back into the above expression, we get, $T_{n+1}(x) + T_{n-1}(x) = 2xT_n(x)$ which is required recurrence relation. 
+\end{solution}
+\part Show that $T_{n}(x)$ is a polynomial of degree n with leading coefficient as $2^{n-1}$ for n $\geq$ 1.\label{9}
+\begin{solution}
+\\
+This follows directly from the recurrence relation derived above and can be proved using induction.
+\begin{itemize}
+    \item The leading term of $T_{1}(x)$ is $x^1$ with a leading coefficient of $2^{1-1} = 1$. Hence, the hypothesis is satisfied for $T_1(x)$.
+    \item Let us assume that the leading term of $T_{k}(x)$ is of degree k with a leading coefficient of $2^{k-1}$ for some k $\in \mathbb{N}$.
+    \item Using the recurrence, we see that, $T_{k+1}(x) = 2xT_{k}(x) - T_{k-1}(x)$. Therefore, the leading term of $T_{k+1}(x)$ will be 2x times the leading term of $T_k(x)$, i.e., the leading term of $T_{k+1}(x)$ will be $x^{k+1}$ with the leading coefficient being $2*2^{k-1}$ = $2^k$ which satisfies the hypothesis. \\ Hence, by the principle of mathematical induction, the given hypothesis is true for all n $\in \mathbb{N}$
+\end{itemize}
+Therefore, it can now be seen that $T_n(x)$ is a polynomial of degree n with leading coefficient as $2^{n-1}$ for n $\geq$ 1.
+\end{solution}
+\part All zeros of $T_{n+1}(x)$ are in the interval [-1,1] and given by $x_k = \text{cos}\left(\frac{2k+1}{2n+2}\pi\right)$, where k $\in \{0,1,2,\ldots,n\}$.
+\begin{solution}
+\\
+Substituting x = $cos(\theta)$ in $T_{n+1}(x)$ gives us $T_{n+1}(x) = cos((n+1)\theta)$.\\
+$cos(\phi)$ goes to 0 when $\phi$ is an odd multiple of $\frac{\pi}{2}$, i.e. ,
+\begin{align*}
+    &\phi = (2k+1)\frac{\pi}{2} &\mbox{ (For k $\in \mathbb{W}$)}
+\end{align*}
+Therefore, taking $\phi = (n+1)\theta$, we have,
+\begin{align*}
+    &(n+1)\theta = (2k+1)\frac{\pi}{2} &\mbox{ (For k $\in \mathbb{W}$)}\\
+    &\theta = \frac{2k+1}{n+1}\frac{\pi}{2}
+\end{align*}
+As x = $\text{cos}(\theta)$, we have,
+\begin{align}
+    x = \text{cos}\left(\frac{(2k+1)\pi}{2n+2}\right) &\mbox{ (For k $\in \mathbb{W}$)}
+\end{align}
+From the expression above,$x_k = \text{cos}\left(\frac{(2k+1)\pi}{2n+2}\right)$, ie the output of a cosine. As the range of $\text{cos}(\theta)$ is [-1,1], $x_{k}$ should necessarily lie in the interval [-1,1].\\
+Therefore, all zeros of $T_{n+1}(x)$ are in the interval [-1,1] and given by $x_k = \text{cos}\left(\frac{2k+1}{2n+2}\pi\right)$ for k $\in \mathbb{W}$.
+\end{solution}
+\part Conclude that $T_{n}(x)$ alternates between +1 and -1 exactly n+1 times.\label{10}
+\begin{solution}
+\\
+Proceeding like we did in the previous subdivision,
+substituting x = $cos(\theta)$ in $T_{n}(x)$ gives us $T_{n}(x) = cos((n)\theta)$. Note: As $\theta = \text{cos}^{-1}(x)$, $\theta$ is confined to [0,$\pi$].\\
+Observing when $\text{cos}(\phi)$ reaches +1 and -1, we have,
+\begin{align*}
+    cos(\phi) &= \begin{cases}
+    1 &\mbox{ When $\phi$ is an even multiple of $\pi$}\\
+    -1  &\mbox{ When $\phi$ is an odd multiple of $\pi$}
+    \end{cases}
+\end{align*}
+Substituting $\phi = n\theta$, we get,
+\begin{align*}
+     cos(n\theta) &= \begin{cases}
+    1 &\mbox{ When $n\theta$ is an even multiple of $\pi$}\\
+    -1  &\mbox{ When $n\theta$ is an odd multiple of $\pi$}
+    \end{cases}\\
+     cos(n\theta) &= \begin{cases}
+    1 &\mbox{ $n\theta = 2k\pi$ for k $\in \mathbb{W}$, 2k $\leq$ n}\\
+    -1  &\mbox{ $n\theta = (2k+1)\pi$ for k $\in \mathbb{W}$, 2k+1 $\leq$ n}
+    \end{cases}
+\end{align*}
+So, for $\{0,2\pi,4\pi,\ldots,2*int\left(\frac{n}{2}\pi\right)\}$ cos$(n\theta)$ reaches +1 and likewise for $\{1,3\pi,5\pi,\ldots,\left(2*int\left(\frac{n}{2}+1\right)\pi\right)\}$ cos$(n\theta)$ reaches -1(int$\left(\frac{n}{2}\right)$ is the result $\frac{n}{2}$ truncated to an integer). \\
+Therefore, we can see that there are a total of n+1 values that make cos$(n\theta)$ +1 or -1 as every integer multiple of $\pi$ with the integers from 0 to n will make this happen.\\
+Additionally, $T_{n}(x)$ alternates between -1 and +1 since for every two successive values that make $T_{n}(x)$ -1, there is a value that makes it +1 and vice versa.
+
+\end{solution}
+\part Show that\\
+\begin{align*}
+    \left|\overset{n}{\underset{k=0}{\mathlarger{\mathlarger{\mathlarger{\Pi}}}}} (x-x_{k})\right| \leq \frac{1}{2^{n}}
+\end{align*}
+for all x $\in$ [-1,1].
+\begin{solution}
+\\
+We see that the polynomial $\overset{n}{\underset{k=0}{\mathlarger{\mathlarger{\mathlarger{\Pi}}}}} (x-x_{k})$ is a monic polynomial and a scaled version of the Chebyshev polynomial with n+1 roots. \\
+Observing the cosine nature of the Chebyshev polynomial, we see that,
+$\left|T_{n+1}(x)\right| = \left|\text{cos}((n+1)\text{arccos}(x))\right| \leq 1$
+as $\left|\text{cos}(\theta)\right| \leq 1$.\\
+As we saw in part \ref{9}, $T_{n+1}(x)$ isn't a monic polynomial and instead has the coefficient of the leading term to be $2^{n}$.\\
+Let us define a monic variant of the Chebyshev polynomial by scaling with the leading coefficient, $t_{n+1}(x) = \frac{1}{2^n}T_{n+1}(x)$. Therefore, $t_{n+1}(x) = \overset{n}{\underset{k=0}{\mathlarger{\mathlarger{\mathlarger{\Pi}}}}} (x-x_{k})$.
+\begin{align*}
+    &\left|t_{n+1}(x)\right| = \frac{1}{2^n}\left|T_{n+1}(x)\right|\\
+    & \left|t_{n+1}(x)\right| \leq \frac{1}{2^n} &\mbox{ (Cosine nature of legendre polynomial)}\\
+    &\left| \overset{n}{\underset{k=0}{\mathlarger{\mathlarger{\mathlarger{\Pi}}}}} (x-x_{k})\right| \leq \frac{1}{2^n}
+\end{align*}
+Hence shown.
+\end{solution}
+\part For any choice of nodes $\{y_{k}\}_{k=0}^{n}$ consider the polynomial $P_{n+1}(x) = \overset{n}{\underset{k=0}{\mathlarger{\mathlarger{\mathlarger{\Pi}}}}} (x-y_{k})$ and look at F(x) = $P_{n+1}(x) - \frac{T_{n+1}(x)}{2^n}$. If $\left|P_{n+1}(x)\right| \leq \frac{1}{2^n}$, show that F(x) alternates in sign n+2 times on the interval [-1,1]. Hence, conclude that F(x) has to be identically zero and therefore conclude that Chebyshev nodes of the first kind minimizes $\text{max}_{x\in [-1,1]} \left|\overset{n}{\underset{k=0}{\mathlarger{\mathlarger{\mathlarger{\Pi}}}}} (x-x_{k})\right|$.
+\begin{solution}
+\\
+From part \ref{10}, we saw that $T_{n+1}(x)$ will alternate between -1 and +1 n+2 times. Let us observe the behaviour of F(x) at these points.\\
+Observing that $\left|P_{n+1}(x)\right| \leq \frac{1}{2^n}$, we have,
+\begin{align}
+    F(x) &= \begin{cases}
+            P_{n+1}(2k\pi) - \frac{1}{2^n} &\mbox{ When $T_{n+1}(x)$ = +1 }\\
+            P_{n+1}((2k+1)\pi) + \frac{1}{2^n} &\mbox{ When $T_{n+1}(x)$ = -1 }
+    \end{cases}
+\end{align}
+Now, when we deal with $\left|P_{n+1}(x)\right| < \frac{1}{2^n}$, and observing the sign of F(x),
+\begin{align*}
+     F(x) &= \begin{cases}
+            -ve &\mbox{ When $T_{n+1}(x)$ = +1 }\\
+            +ve &\mbox{ When $T_{n+1}(x)$ = -1 }
+    \end{cases}
+\end{align*}
+Therefore, we have F(x) alternating in sign at the same n+2 points $T_{n+1}(x)$ was +1 or -1. This means that F(x) crosses zero n+1 times and therefore F(x) should have n+1 zeros. But looking at the way F(x) is defined, we see that it is a polynomial of order n as both $P_{n+1}(x)$ and $\frac{T_{n+1}(x)}{2^n}$ being monic polynomials of order n+1, cancel out their leading term. This leads us to a contradiction, as an $n^{th}$ order polynomial cannot have n+1 zeros unless it's identically zero everywhere. Therefore, for this to happen, $P_{n+1}(x) = \frac{T_{n+1}(x)}{2^n}$. This tells us that the above property is satisfied even for the constraint, $\left|P_{n+1}(x)\right| \leq \frac{1}{2^n}$.\\
+For the boundary case where, $\left|P_{n+1}(x)\right| = \frac{1}{2^n}$, we have the function constantly maintaining a magnitude of $\frac{1}{2^n}$ while simultaneously having n+1 roots (from the definition of $P_{n+1}(x)$) which yields a contradiction.
+\\
+Therefore, we see that only for the choice of $y_{k} = x_{k}$,
+$\left|\overset{n}{\underset{k=0}{\mathlarger{\mathlarger{\mathlarger{\Pi}}}}} (x-y_{k})\right| \leq \frac{1}{2^n}$ for all x and hence, this is also valid for the x $\in$ [-1,1] that maximizes the polynomial.\\
+Therefore, we can see that the Chebyshev nodes of the first kind minimizes $\text{max}_{x\in [-1,1]} \left|\overset{n}{\underset{k=0}{\mathlarger{\mathlarger{\mathlarger{\Pi}}}}} (x-x_{k})\right|$. 
+\end{solution}
+\end{parts}
+\question {\sc [Programming: Function Interpolation]}\\
+Consider the uniformly spaced nodes, the Legendre nodes, Chebyshev nodes of the first kind for n+1 points. For all these sets of points, perform the following:
+\begin{parts}
+\part Plot the condition number of the Vandermonde matrix as a function of n (Use semilogy for plot).Comment on how the condition number scales with n for all these three sets of nodes. You will get three curves (one corresponding to the uniform nodes, one corresponding to the Legendre nodes and another one corresponding to the Chebyshev nodes).
+\begin{solution}
+\\
+\textbf{The plot:}\\
+\begin{figure}[H]  
+     \centering
+     %\begin{subfigure}[b]{0.3\textwidth}
+         %\centering
+    \includegraphics[width=6cm]{Cond.png}
+     \label{fig:Dendrogram for the problem 3(c)}
+     %\end{subfigure}
+     \caption{Semilogy plot of the condition number as a function of n for the three types of nodes}
+\end{figure}
+\textbf{Observations:}
+The condition numbers were obtained by varying n from n = 5 to n=35 in steps of 2.
+\begin{itemize}
+    \item From the plot, we see that, the condition number of the Vandermonde matrix rises exponentially with n for all three nodes.
+    \item We see that, the condition number of the vandermonde matrix obtained from the lagrange and chebyshev nodes are comparable while that obtained from the uniform nodes is much higher.
+    \item The condition number of a matrix is related to the square root of the sum of squares of the elements of the matrix.The lagrange and chebyshev nodes have quite a lot of terms towards the endpoints, where the runge function is smaller, when compared to the uniform nodes. Thus, using the definition of the condition number, we can see why the above phenomenon occurs.
+    \item Using the code, we can see that, \\
+    Starting condition numbers: legendre nodes:22.704,uniform nodes:23.531,chebyshev nodes:36.837\\
+Ending condition numbers: legendre nodes:6.141e+12,uniform nodes:4.994e+15,chebyshev nodes:9.778e+12
+\item From this, we can roughly say that the condition number of the Vandermonde matrix obtained through the uniform nodes increases exponentially at a rate of $10^{0.5n}$ for n nodes while for the chebyshev and legendre nodes, the increase is of the order $10^{0.4n}$.
+\end{itemize}
+\end{solution}
+\part For the Runge function obtain and plot the interpolant by the three sets of nodes for n $\in \{5,7,9,\ldots,33,35\}$ by \\
+\begin{itemize}
+    \item Solving the linear system
+    \item Using Lagrange polynomials
+\end{itemize}
+Comment on the above.
+\begin{solution}
+\\
+\textbf{The Plots for the lagrange polynomial based interpolants:}
+\begin{figure}[H]  
+     \centering
+     %\begin{subfigure}[b]{0.3\textwidth}
+         %\centering
+    \includegraphics[width=12.5cm]{b1.png}
+     \label{fig:Dendrogram for the problem 3(c)}
+     %\end{subfigure}
+     \caption{Plot of the interpolant using lagrange polynomials and uniform nodes}
+\end{figure}
+\begin{figure}[H]  
+     \centering
+     %\begin{subfigure}[b]{0.3\textwidth}
+         %\centering
+    \includegraphics[width=12.5cm]{b2.png}
+     \label{fig:Dendrogram for the problem 3(c)}
+     %\end{subfigure}
+     \caption{Plot of the interpolant using lagrange polynomials and legendre nodes}
+\end{figure}
+\begin{figure}[H]  
+     \centering
+     %\begin{subfigure}[b]{0.3\textwidth}
+         %\centering
+    \includegraphics[width=12.5cm]{b3.png}
+     \label{fig:Dendrogram for the problem 3(c)}
+     %\end{subfigure}
+     \caption{Plot of the interpolant using lagrange polynomials and chebyshev nodes}
+\end{figure}
+\begin{figure}[H]  
+     \centering
+     %\begin{subfigure}[b]{0.3\textwidth}
+         %\centering
+    \includegraphics[width=12.5cm]{b4.png}
+     \label{fig:Dendrogram for the problem 3(c)}
+     %\end{subfigure}
+     \caption{Plot of the interpolant using linear system and uniform nodes}
+\end{figure}
+\textbf{The Plots for the linear system based interpolants:}
+\begin{figure}[H]  
+     \centering
+     %\begin{subfigure}[b]{0.3\textwidth}
+         %\centering
+    \includegraphics[width=12.5cm]{b5.png}
+     \label{fig:Dendrogram for the problem 3(c)}
+     %\end{subfigure}
+     \caption{Plot of the interpolant using linear system and legendre nodes}
+\end{figure}
+\begin{figure}[H]  
+     \centering
+     %\begin{subfigure}[b]{0.3\textwidth}
+         %\centering
+    \includegraphics[width=12.5cm]{b6.png}
+     \label{fig:Dendrogram for the problem 3(c)}
+     %\end{subfigure}
+     \caption{Plot of the interpolant using linear system and chebyshev nodes}
+\end{figure}
+\textbf{Observations}
+\begin{itemize}
+    \item We see that as the number of nodes used goes up, we get a better approximation of the function for the chebyshev and the legendre nodes.
+    \item We see that the uniform nodes do a poor job at interpolating the runge function and it only gets worse with an increase in the number of nodes.
+    \item The runge phenomenon, i.e., ringing of the interpolant of the runge funtion towards the endpoints +1 and -1 is observed for the uniform nodes.
+    \item We see that even the legendre nodes don't perform very well at the boundary points for small values of n.This is because, for smaller values of n, there are very few nodes situated around the boundary points and this can be observed computationally.
+    \item Similarly,we see that while the chebyshev nodes perform well at the boundary, it doesn't perform as well towards the peak portion of the runge function.This is because the chebyshev nodes for these values of n is primarily situated around the endpoints.
+    \item We see that the runge phenomenon can be prevented by implementing a sufficient number of chebyshev or legendre nodes.
+    \item We see that the chebyshev nodes perform marginally better than the legendre nodes while both perform much better than the uniform nodes.
+    \item Notably, we see that the linear system and the lagrange polynomials based interpolations give a very similar curves.
+\end{itemize}
+
+\end{solution}
+\part Plot the decay in maximum relative error as a function of n (on a semilogy) plot for the three different interpolants (vary n from 5 to 35 in steps of 2). To get the maximum relative error, evaluate the interpolant and the Runge function at 1001 equally spaced points and compute the maximum relative error at these 1001 points.
+\begin{solution}
+\\
+\textbf{The plots:}\\
+\begin{figure}[H]  
+     \centering
+     %\begin{subfigure}[b]{0.3\textwidth}
+         %\centering
+    \includegraphics[width=6cm]{c.png}
+     \label{fig:Dendrogram for the problem 3(c)}
+     %\end{subfigure}
+     \caption{Semilogy plot of the maximum relative errors of the interpolants}
+\end{figure}
+\begin{figure}[H]  
+     \centering
+     %\begin{subfigure}[b]{0.3\textwidth}
+         %\centering
+    \includegraphics[width=6cm]{c_noise.png}
+     \label{fig:Dendrogram for the problem 3(c)}
+     %\end{subfigure}
+     \caption{Semilogy plot of the maximum relative errors of the interpolants with input noise added}
+\end{figure}
+\textbf{Observations:}
+\begin{itemize}
+    \item We see that the relative errors decrease exponentially for the legendre and the chebyshev nodes while it increases exponentially for the uniform ones, in accordance with the runge phenomenon.
+    \item We also observe similar trends in the performance of the legendre and the chebyshev nodes. The chebyshev nodes have much lower relative errors when compared to the legendre ones. This can attributed to the fact,that while the legendre nodes minimize the norm of the monic polynomial of a particular order, the chebyshev nodes minimize the maximum value of the norm. Since, we're computing the max relative error, the chebyshev nodes thus perform better.
+    \item From the values of the relative errors, we see that while the legendre and the chebyshev nodes decrease exponentially with the order of $10^{1/6}$, the uniform nodes curve increases exponentially with the order of $10^{1/10}$.
+    \item Strangely, we see that the relative error curves for the interpolants obtained through the lagrange polynomials and the linear system coincide.This is because they're two different ways of obtaining the same polynomial.
+    \item Despite the linear system approach being ill conditioned (by the large values of the condition number of the vandermonde matrix), as the computing algorithm is backward stable, the interpolation ends up being good.
+    \item We see that, on the presence of external noise to the input, the linear system approach performs better when compared to the lagrange polynomials one.
+\end{itemize}
+\end{solution}
+\end{parts}
+\question {\sc [Lagrange Polynomials]}\\
+Show that for any set of interpolant nodes, we have,
+\begin{align*}
+    \sum_{j=0}^{n} x_{j}^{m}l_{j}(x) = x^{m}
+\end{align*}
+for all m $\in \{0,1,\ldots,n\}$ where $l_{j}$(x) is the $j^{th}$ Lagrange polynomial.
+\begin{solution}
+\\
+The Lagrange polynomials are $n^{th}$ order polynomials defined in the below fashion for the set of interpolant nodes $\{x_j\}_{j=0}^{n}$
+\begin{align}
+    l_j(x) = \overset{n}{\underset{i \neq j}{\underset{i=0}{\mathlarger{\mathlarger{\mathlarger{\Pi}}}}}} \left(\frac{x-x_j}{x_i-x_j}\right)
+\end{align}
+From the way it is defined above, we can observe that,
+\begin{align}\label{16}
+    l_j(x_i)= \delta_{ij} &= \begin{cases}
+                            0 & \mbox{ if i $\neq$ j}\\
+                            1 & \mbox{if i = j}
+    \end{cases}
+\end{align}
+Now, let us define an error function E(x) that computes the error in interpolating the function $x^m$ using lagrange polynomials.
+Therefore,
+\begin{align*}
+    E(x) = x^m - \sum_{j=0}^{n} x_{j}^{m}l_{j}(x) 
+\end{align*}
+where $\sum_{j=0}^{n} x_{j}^{m}l_{j}(x)$ is the lagrange polynomial based interpolation of $x^{m}$.
+\\
+From \ref{16}, we see that whenever x = $x_{j}$, a node,$\sum_{j=0}^{n} x_{j}^{m}l_{j}(x)$ = $x_j^m$. Therefore, for each of the interpolant nodes, E(x) = 0. Therefore, E(x) has n+1 zeroes as there are n+1 interpolant nodes in total.
+But, E(x) has the same order as the lagrange polynomial as $m \leq n$. Therefore, E(x) is of order n. Since E(x) has n+1 zeroes despite being an $n^{th}$ order polynomial, it has to be identically 0 for all values of x.\\
+Therefore, $\sum_{j=0}^{n} x_{j}^{m}l_{j}(x) = x^m$ for all $m \leq n$.
+
+\end{solution}
+
+\end{questions}
+\end{document}
